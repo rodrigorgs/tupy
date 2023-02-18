@@ -23,11 +23,24 @@ class Window:
         self.create_member_pane()
 
     def create_object_pane(self):
-        self.object_pane = tk.Frame(self.side_pane)
-        self.side_pane.add(self.object_pane)
+        outer = ttk.Frame(self.side_pane, height=200)
+        self.side_pane.add(outer)
+
+        canvas = tk.Canvas(outer)
+        scrollbar = ttk.Scrollbar(outer, orient=tk.VERTICAL, command=canvas.yview)
+
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        canvas.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        frame = ttk.Frame(canvas)
+        frame.bind("<Configure>", lambda event: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.create_window((0, 0), window=frame, anchor="nw")
+
+        self.object_pane = frame
 
     def create_member_pane(self):
-        self.member_pane = tk.Frame(self.side_pane)
+        self.member_pane = ttk.Frame(self.side_pane)
         self.side_pane.add(self.member_pane)
 
     def create_canvas(self):
@@ -35,7 +48,7 @@ class Window:
         self.canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
     def create_console(self):
-        self.console = tk.Entry(self.root, bg="black", fg="white", insertbackground='white')
+        self.console = ttk.Entry(self.root) #, bg="black", fg="white", insertbackground='white')
         self.console.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         self.console.bind("<Return>", self.submit_console)
 

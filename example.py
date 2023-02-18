@@ -5,7 +5,7 @@ class Carro(Object):
         self.x += 1
 
 class Star(Object):
-    def __init__(self):
+    def __init__(self, x=0, y=0):
         super().__init__()
         self.contador = 10
         self.ativado = True
@@ -29,4 +29,9 @@ carro = Carro()
 star = Star()
 star.x = 100
 star.y = 100
+a = Star(20, 20)
+b = Star(50, 50)
+c = Star(20, 50)
+d = Star(50, 20)
+
 run(globals())
