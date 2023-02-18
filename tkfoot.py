@@ -5,7 +5,7 @@ from gui import Window
 from input import InputMap
 
 global_canvas = None
-inspector = None
+inspector: Optional[Inspector] = None
 input = InputMap()
 
 class Object:
