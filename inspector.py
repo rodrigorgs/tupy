@@ -1,12 +1,16 @@
 class Inspector:
-    def __init__(self, env) -> None:
+    def __init__(self, env, other_objects=[]) -> None:
         self._env = env or []
+        self._other_objects = other_objects
     
     def public_variables(self, type=object):
         return [var for var in self._env if not var.startswith('_') and isinstance(self._env[var], type)]
     
     def public_objects(self, type=object):
         return [self._env[var] for var in self.public_variables(type=type)]
+    
+    def public_and_other_objects(self, type=object):
+        return list(set(self.public_objects(type) + self._other_objects))
 
     def object_for_variable(self, var):
         return self._env[var]

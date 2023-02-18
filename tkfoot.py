@@ -7,6 +7,7 @@ from input import InputMap
 global_canvas = None
 inspector = None
 input = InputMap()
+_world = []
 
 class Object:
     def __init__(self):
@@ -15,8 +16,10 @@ class Object:
         self._sprite = global_canvas.create_image(50, 50, image=self._img)
         self._angle = 0
         self._input = input
+        _world.append(self)
 
     def destroy(self):
+        _world.remove(self)
         inspector.destroy_object(self)
 
     @property
@@ -60,7 +63,7 @@ global_canvas = window.canvas
 
 def run(globals):
     global inspector
-    inspector = Inspector(globals)
+    inspector = Inspector(globals, _world)
     window._inspector = inspector
     window.update_object_pane()
     window.main_loop()

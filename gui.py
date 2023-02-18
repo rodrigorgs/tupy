@@ -103,7 +103,7 @@ class Window:
                 button.pack(anchor=tk.W, padx=5)
 
     def run_updates(self):
-        for obj in self._inspector.public_objects(type=self._common_supertype):
+        for obj in self._inspector.public_and_other_objects(type=self._common_supertype):
             if hasattr(obj, 'update'):
                 obj.update()
         self._input.update()
