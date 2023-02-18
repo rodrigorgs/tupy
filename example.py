@@ -1,10 +1,10 @@
 from tkfoot import *
 
-class Carro(Objeto):
+class Carro(Object):
     def update(self):
         self.x += 1
 
-class Star(Objeto):
+class Star(Object):
     def __init__(self):
         super().__init__()
         self.contador = 10
