@@ -1,6 +1,6 @@
 import tkinter as tk
+import tkinter.simpledialog as simpledialog
 import tkinter.ttk as ttk
-from input import InputMap
 
 class Window:
     def __init__(self, inspector, input, common_supertype):
@@ -85,23 +85,30 @@ class Window:
     def update_member_pane(self, obj_name):
         def make_callback(obj_name, member_name):
             def callback():
-                self.run_command(f'{obj_name}.{member_name}()')
-                self.update_member_pane(obj_name)
+                obj = self._inspector.object_for_variable(obj_name)
+                method = self._inspector.get_method(obj, member_name)
+                info = self._inspector.method_info(method)
+                if self._inspector.method_parameters(method) == []:
+                    params = ''
+                else:
+                    params = simpledialog.askstring("Provide parameters", f"Comma-separated parameter list:\n{info}")
+                if params is not None:
+                    self.run_command(f'{obj_name}.{member_name}({params})')
+                    self.update_member_pane(obj_name)
             return callback
 
-        # TODO: replace by tree
         for child in self.member_pane.winfo_children():
             child.destroy()
 
         cols = ('name', 'value', 'type')
-        tree = ttk.Treeview(self.member_pane, columns=cols, show='headings')
+        tree = ttk.Treeview(self.member_pane, columns=cols, show='headings', height=6)
         tree.column('name', stretch=tk.YES, width=50)
         tree.column('value', stretch=tk.YES, width=50)
         tree.column('type', stretch=tk.YES, width=50)
         tree.heading('name', text='Name')
         tree.heading('value', text='Value')
         tree.heading('type', text='Type')
-        tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        tree.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
         if obj_name in self._inspector.public_variables(type=self._common_supertype):
             obj = self._inspector.object_for_variable(obj_name)

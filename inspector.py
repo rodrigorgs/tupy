@@ -1,3 +1,5 @@
+import inspect
+
 class Inspector:
     def __init__(self, env) -> None:
         self._env = env or []
@@ -23,3 +25,16 @@ class Inspector:
         return [attr for attr in dir(obj) if not attr.startswith('_') and callable(getattr(obj, attr))]
     def get_public_attributes(self, obj):
         return [attr for attr in dir(obj) if not attr.startswith('_') and not callable(getattr(obj, attr))]
+    
+    def get_method(self, obj, method_name):
+        return getattr(obj, method_name)
+
+    def method_parameters(self, method):
+        # return inspect.signature(method).parameters
+        return inspect.getargspec(method).args[1:]
+
+    def method_info(self, method):
+        s = f'{method.__name__}{inspect.signature(method)}'
+        if method.__doc__ is not None:
+            s += method.__doc__
+        return s

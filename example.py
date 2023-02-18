@@ -45,6 +45,17 @@ class Star(tupy.Object):
         self.contador = 10
         self.ativado = True
     
+    def set(self, contador, ativado):
+        '''
+        altera o contador e o estado
+        '''
+        self.contador = contador
+        self.ativado = ativado
+        if ativado:
+            self.ativar()
+        else:
+            self.desativar()
+
     def desativar(self):
         self.image = 'star2.png'
         self.ativado = False
