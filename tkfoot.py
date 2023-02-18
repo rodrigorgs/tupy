@@ -15,20 +15,40 @@ root = tk.Tk()
 root.geometry("800x600")
 
 # Create the side panel
-side_panel = tk.Frame(root, bg="light gray")
-side_panel.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+side_pane = tk.PanedWindow(root, orient=tk.VERTICAL)
+side_pane.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+# Object pane
+# TODO: use a tk.Listbox
+object_pane = tk.Frame(side_pane, bg="light gray")
+side_pane.add(object_pane)
 
 # Add some content to the side panel
 def update_side_panel():
-    for child in side_panel.winfo_children():
+    for child in object_pane.winfo_children():
         child.destroy()
     for var in all_variables():
-        label = tk.Label(side_panel, text=var)
-        label.pack()
-# Remove all children from side panel
+        def make_callback(var):
+            def callback(event):
+                update_member_pane(var)
+            return callback
 
-# label = tk.Label(side_panel, text="Side Panel", font=("Helvetica", 16))
-# label.pack(pady=10)
+        label = tk.Label(object_pane, text=f'{var}: {type(__global_env[var]).__name__}')
+        label.bind('<Button-1>', make_callback(var))
+        label.pack()
+# Member pane
+member_pane = tk.Frame(side_pane, bg="light gray")
+side_pane.add(member_pane)
+
+# Update member pane
+def update_member_pane(obj_name):
+    for child in member_pane.winfo_children():
+        child.destroy()
+    obj = __global_env[obj_name]
+    for member in dir(obj):
+        if not member.startswith('_'):
+            label = tk.Label(member_pane, text=member)
+            label.pack()
 
 # Create the canvas
 canvas = tk.Canvas(root, width=400, height=300, bg="white")
@@ -51,8 +71,8 @@ console.bind("<Return>", submit_console)
 
 class Objeto:
     def __init__(self):
-        image_path = self.__class__.__name__.lower() + '.png'
-        self._img = ImageTk.PhotoImage(Image.open(image_path))
+        self._image_path = self.__class__.__name__.lower() + '.png'
+        self._img = ImageTk.PhotoImage(Image.open(self._image_path))
         self._sprite = canvas.create_image(50, 50, image=self._img)
         world.append(self)
         print('objeto init')
@@ -74,6 +94,14 @@ class Objeto:
     def y(self, value):
         canvas.coords(self._sprite, self.x, value)
 
+    @property
+    def image(self):
+        return self._image_path
+    @image.setter
+    def image(self, value):
+        self._image_path = value
+        self._img = ImageTk.PhotoImage(Image.open(self._image_path))
+        canvas.itemconfig(self._sprite, image=self._img)
 
     # def __getattr__(self, name):
     #     if not hasattr(self._sprite, name):
@@ -93,6 +121,7 @@ def run(globals):
     __global_env = globals
     update_side_panel()
     root.after(50, run_updates)
+    root.bind("<Escape>", lambda _event: root.destroy())
     root.mainloop()
 
 # find_closest
