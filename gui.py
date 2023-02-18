@@ -89,14 +89,31 @@ class Window:
                 self.update_member_pane(obj_name)
             return callback
 
+        # TODO: replace by tree
         for child in self.member_pane.winfo_children():
             child.destroy()
 
+        cols = ('name', 'value', 'type')
+        tree = ttk.Treeview(self.member_pane, columns=cols, show='headings')
+        tree.heading('name', text='Name')
+        tree.heading('value', text='Value')
+        tree.heading('type', text='Type')
+        
+        # self.member_tree = tree
+
         if obj_name in self._inspector.public_variables(type=self._common_supertype):
             obj = self._inspector.object_for_variable(obj_name)
+            
+            # tree_items = []
             for attr in self._inspector.get_public_attributes(obj):
-                label = tk.Label(self.member_pane, text=f'{attr}: {getattr(obj, attr)}')
-                label.pack(anchor=tk.W, padx=5)
+                # label = tk.Label(self.member_pane, text=f'{attr}: {getattr(obj, attr)}')
+                # label.pack(anchor=tk.W, padx=5)
+                tuple = (attr, str(getattr(obj, attr)), type(getattr(obj, attr)).__name__)
+                tree.insert('', tk.END, tuple)
+                print('tree insert', tuple)
+            # tree.insert('', 'end', values=tree_items)
+            tree.pack(side=tk.TOP, fill=tk.BOTH)
+
             for method in self._inspector.get_public_methods(obj):
                 if method in ('update', ):
                     continue
