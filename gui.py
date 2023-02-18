@@ -98,6 +98,8 @@ class Window:
                 label = tk.Label(self.member_pane, text=f'{attr}: {getattr(obj, attr)}')
                 label.pack(anchor=tk.W, padx=5)
             for method in self._inspector.get_public_methods(obj):
+                if method in ('update', ):
+                    continue
                 button = ttk.Button(self.member_pane, text=f'{method}()',
                                     command=make_callback(obj_name, method))
                 button.pack(anchor=tk.W, padx=5)
