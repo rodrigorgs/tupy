@@ -1,8 +1,9 @@
 from typing import Optional
-from inspector import Inspector
 from PIL import ImageTk, Image
-from gui import Window
-from input import InputMap
+
+from tupy.gui import Window
+from tupy.input import InputMap
+from tupy.inspector import Inspector
 
 global_canvas = None
 inspector: Optional[Inspector] = None

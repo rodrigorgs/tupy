@@ -8,7 +8,7 @@
       "name": "Python: example",
       "type": "python",
       "request": "launch",
-      "program": "src/tupy/example.py",
+      "program": "src/example.py",
       "console": "integratedTerminal",
       "justMyCode": true
     }
