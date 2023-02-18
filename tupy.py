@@ -17,6 +17,8 @@ class Object:
         self._input = input
 
     def collides_with(self, other):
+        if not isinstance(other, Object):
+            raise TypeError('checking collision: other must be a tupy.Object')
         x, y = self.x, self.y
         w, h = self._img.width() / 2, self._img.height() / 2
         ox, oy = other.x, other.y
