@@ -19,7 +19,7 @@ class Window:
 
     def create_side_pane(self):
         self.side_pane = ttk.PanedWindow(self.root, orient=tk.VERTICAL)
-        self.side_pane.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.side_pane.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         self.create_object_pane()
         self.create_member_pane()
@@ -95,24 +95,20 @@ class Window:
 
         cols = ('name', 'value', 'type')
         tree = ttk.Treeview(self.member_pane, columns=cols, show='headings')
+        tree.column('name', stretch=tk.YES, width=50)
+        tree.column('value', stretch=tk.YES, width=50)
+        tree.column('type', stretch=tk.YES, width=50)
         tree.heading('name', text='Name')
         tree.heading('value', text='Value')
         tree.heading('type', text='Type')
-        
-        # self.member_tree = tree
+        tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         if obj_name in self._inspector.public_variables(type=self._common_supertype):
             obj = self._inspector.object_for_variable(obj_name)
             
-            # tree_items = []
             for attr in self._inspector.get_public_attributes(obj):
-                # label = tk.Label(self.member_pane, text=f'{attr}: {getattr(obj, attr)}')
-                # label.pack(anchor=tk.W, padx=5)
                 tuple = (attr, str(getattr(obj, attr)), type(getattr(obj, attr)).__name__)
-                tree.insert('', tk.END, tuple)
-                print('tree insert', tuple)
-            # tree.insert('', 'end', values=tree_items)
-            tree.pack(side=tk.TOP, fill=tk.BOTH)
+                tree.insert('', tk.END, values=tuple)
 
             for method in self._inspector.get_public_methods(obj):
                 if method in ('update', ):
