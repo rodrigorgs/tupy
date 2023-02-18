@@ -16,6 +16,13 @@ class Object:
         self._angle = 0
         self._input = input
 
+    def collides_with(self, other):
+        x, y = self.x, self.y
+        w, h = self._img.width() / 2, self._img.height() / 2
+        ox, oy = other.x, other.y
+        ow, oh = other._img.width() / 2, other._img.height() / 2
+        return abs(x - ox) < w + ow and abs(y - oy) < h + oh
+
     def destroy(self):
         inspector.destroy_object(self)
 

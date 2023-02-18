@@ -1,5 +1,8 @@
 import tupy
 
+class Mundo(tupy.Object):
+    pass
+
 class Carro(tupy.Object):
     def __init__(self):
         super().__init__()
@@ -10,12 +13,19 @@ class Carro(tupy.Object):
             self.x += 10
         if self._input.is_key_down('Left'):
             self.x -= 10
-        if self._input.is_key_just_down('Up'):
+        if self._input.is_key_down('Up'):
+            self.y -= 10
+        if self._input.is_key_down('Down'):
+            self.y += 10
+        if self._input.is_key_just_down('Return'):
             self.angle += 45
         if self._input.is_key_just_down('space'):
             self.dispara()
         for s in self.stars:
             s.update()
+        
+        if self.collides_with(star):
+            self.reinicia()
 
     def dispara(self):
         s = Star()
@@ -52,10 +62,11 @@ class Star(tupy.Object):
                 self.ativar()
 
 carro = Carro()
+carro.x = 100
 carro.y = 200
 star = Star()
-star.x = 100
-star.y = 400
+star.x = 300
+star.y = 200
 # a = Star(20, 20)
 # b = Star(50, 50)
 # c = Star(20, 50)
