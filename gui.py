@@ -52,6 +52,13 @@ class Window:
         self.console.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         self.console.bind("<Return>", self.submit_console)
 
+    def run_command(self, command):
+        try:
+            exec(command, self._inspector._env)
+            self.update_object_pane()
+        finally:
+            pass
+
     def submit_console(self, _event):
         try:
             exec(self.console.get(), self._inspector._env)
@@ -68,18 +75,29 @@ class Window:
                     self.update_member_pane(var)
                 return callback
 
-            label = tk.Label(self.object_pane, text=f'{var}: {type(self._inspector.object_for_variable(var)).__name__}')
+            label = ttk.Label(self.object_pane, text=f'{var}: {type(self._inspector.object_for_variable(var)).__name__}')
             label.bind('<Button-1>', make_callback(var))
-            label.pack()
+            label.pack(padx=5, anchor=tk.W)
 
     def update_member_pane(self, obj_name):
+        def make_callback(obj_name, member_name):
+            def callback():
+                self.run_command(f'{obj_name}.{member_name}()')
+                self.update_member_pane(obj_name)
+            return callback
+
         for child in self.member_pane.winfo_children():
             child.destroy()
-        obj = self._inspector.object_for_variable(obj_name)
-        for member in dir(obj):
-            if not member.startswith('_'):
-                label = tk.Label(self.member_pane, text=member)
-                label.pack()
+
+        if obj_name in self._inspector.public_variables(type=self._common_supertype):
+            obj = self._inspector.object_for_variable(obj_name)
+            for attr in self._inspector.get_public_attributes(obj):
+                label = tk.Label(self.member_pane, text=f'{attr}: {getattr(obj, attr)}')
+                label.pack(anchor=tk.W, padx=5)
+            for method in self._inspector.get_public_methods(obj):
+                button = ttk.Button(self.member_pane, text=f'{method}()',
+                                    command=make_callback(obj_name, method))
+                button.pack(anchor=tk.W, padx=5)
 
     def run_updates(self):
         for obj in self._inspector.public_objects(type=self._common_supertype):

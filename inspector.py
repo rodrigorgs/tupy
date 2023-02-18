@@ -18,3 +18,8 @@ class Inspector:
         for var in self.public_variables():
             if self._env[var] == obj:
                 self.destroy_variable(var)
+
+    def get_public_methods(self, obj):
+        return [attr for attr in dir(obj) if not attr.startswith('_') and callable(getattr(obj, attr))]
+    def get_public_attributes(self, obj):
+        return [attr for attr in dir(obj) if not attr.startswith('_') and not callable(getattr(obj, attr))]

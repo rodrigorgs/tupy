@@ -3,6 +3,9 @@ from tkfoot import *
 class Carro(Object):
     def update(self):
         self.x += 1
+    
+    def reinicia(self):
+        self.x = 0
 
 class Star(Object):
     def __init__(self, x=0, y=0):
