@@ -3,6 +3,8 @@ import tupy
 class Mundo(tupy.Object):
     pass
 
+m = Mundo()
+
 class Carro(tupy.Object):
     def __init__(self):
         super().__init__()

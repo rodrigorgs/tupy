@@ -1,5 +1,6 @@
 from typing import Optional
 from PIL import ImageTk, Image
+import importlib.resources as pkg_resources
 
 from tupy.gui import Window
 from tupy.input import InputMap
@@ -12,7 +13,13 @@ input = InputMap()
 class Object:
     def __init__(self):
         self._image_path = self.__class__.__name__.lower() + '.png'
-        self._img = ImageTk.PhotoImage(Image.open(self._image_path))
+        try:
+            self._img = ImageTk.PhotoImage(Image.open(self._image_path))
+        except FileNotFoundError:
+            try:
+                self._img = ImageTk.PhotoImage(Image.open(pkg_resources.path('tupy', 'assets/' + self._image_path)))
+            except FileNotFoundError:
+                self._img = ImageTk.PhotoImage(Image.open(pkg_resources.path('tupy', 'assets/missing.png')))
         self._sprite = global_canvas.create_image(50, 50, image=self._img)
         self._angle = 0
         self._input = input
