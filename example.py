@@ -1,6 +1,6 @@
-from tkfoot import *
+import tupy
 
-class Carro(Object):
+class Carro(tupy.Object):
     def __init__(self):
         super().__init__()
         self.stars = []
@@ -29,7 +29,7 @@ class Carro(Object):
             s.destroy()
         self.stars = []
 
-class Star(Object):
+class Star(tupy.Object):
     def __init__(self, x=0, y=0):
         super().__init__()
         self.contador = 10
@@ -42,7 +42,7 @@ class Star(Object):
         self.image = 'star.png'
         self.ativado = True
     def update(self):
-        self.angle += 10
+        self.angle = (self.angle + 10) % 360
         self.contador -= 1
         if self.contador == 0:
             self.contador = 10
@@ -61,4 +61,4 @@ star.y = 400
 # c = Star(20, 50)
 # d = Star(50, 20)
 
-run(globals())
+tupy.run(globals())
