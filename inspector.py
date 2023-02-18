@@ -10,3 +10,11 @@ class Inspector:
 
     def object_for_variable(self, var):
         return self._env[var]
+
+    def destroy_variable(self, var):
+        del self._env[var]
+    
+    def destroy_object(self, obj):
+        for var in self.public_variables():
+            if self._env[var] == obj:
+                self.destroy_variable(var)

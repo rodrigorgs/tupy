@@ -4,6 +4,7 @@ from gui import Window
 from PIL import ImageTk, Image
 
 canvas = None
+inspector = None
 
 class Object:
     def __init__(self):
@@ -12,6 +13,9 @@ class Object:
         self._sprite = canvas.create_image(50, 50, image=self._img)
         print('objeto init')
         print(type(self._sprite))
+
+    def destroy(self):
+        inspector.destroy_object(self)
 
     @property
     def x(self):
@@ -38,16 +42,13 @@ class Object:
         self._img = ImageTk.PhotoImage(Image.open(self._image_path))
         canvas.itemconfig(self._sprite, image=self._img)
 
-    # def __getattr__(self, name):
-    #     if not hasattr(self._sprite, name):
-    #         raise AttributeError(f"'{name}' not in sprite.")
-    #     return lambda: (i for i in getattr(self._sprite, name)())
-
-window = Window(inspector=None, common_supertype=Object)
+window = Window(inspector=inspector, common_supertype=Object)
 window.create()
 canvas = window.canvas
 
 def run(globals):
-    window._inspector = Inspector(globals)
+    global inspector
+    inspector = Inspector(globals)
+    window._inspector = inspector
     window.update_object_pane()
     window.main_loop()
