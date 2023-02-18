@@ -20,6 +20,7 @@ class Star(Object):
         self.image = 'star.png'
         self.ativado = True
     def update(self):
+        self.angle += 10
         self.contador -= 1
         if self.contador == 0:
             self.contador = 10

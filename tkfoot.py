@@ -11,6 +11,7 @@ class Object:
         self._image_path = self.__class__.__name__.lower() + '.png'
         self._img = ImageTk.PhotoImage(Image.open(self._image_path))
         self._sprite = global_canvas.create_image(50, 50, image=self._img)
+        self._angle = 0
 
     def destroy(self):
         inspector.destroy_object(self)
@@ -38,6 +39,16 @@ class Object:
     def image(self, value):
         self._image_path = value
         self._img = ImageTk.PhotoImage(Image.open(self._image_path))
+        global_canvas.itemconfig(self._sprite, image=self._img)
+        self.angle = self.angle # Rotate image if needed
+
+    @property
+    def angle(self):
+        return self._angle
+    @angle.setter
+    def angle(self, value):
+        self._angle = value
+        self._img = ImageTk.PhotoImage(Image.open(self._image_path).rotate(value))
         global_canvas.itemconfig(self._sprite, image=self._img)
 
 window = Window(inspector=inspector, common_supertype=Object)
