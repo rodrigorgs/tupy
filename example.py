@@ -2,7 +2,12 @@ from tkfoot import *
 
 class Carro(Object):
     def update(self):
-        self.x += 1
+        if self._input.is_key_down('Right'):
+            self.x += 10
+        if self._input.is_key_down('Left'):
+            self.x -= 10
+        if self._input.is_key_just_down('Up'):
+            self.angle += 45
     
     def reinicia(self):
         self.x = 0

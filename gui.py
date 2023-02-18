@@ -1,10 +1,12 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+from input import InputMap
 
 class Window:
-    def __init__(self, inspector, common_supertype):
+    def __init__(self, inspector, input, common_supertype):
         self._inspector = inspector
         self._common_supertype = common_supertype
+        self._input = input
 
     def create(self):
         self.root = tk.Tk()
@@ -46,6 +48,7 @@ class Window:
     def create_canvas(self):
         self.canvas = tk.Canvas(self.root, width=400, height=300, bg="white")
         self.canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.canvas.bind("<1>", lambda event: event.widget.focus_set())
 
     def create_console(self):
         self.console = ttk.Entry(self.root) #, bg="black", fg="white", insertbackground='white')
@@ -103,8 +106,11 @@ class Window:
         for obj in self._inspector.public_objects(type=self._common_supertype):
             if hasattr(obj, 'update'):
                 obj.update()
+        self._input.update()
         self.root.after(50, self.run_updates)
 
     def main_loop(self):
         self.root.after(50, self.run_updates)
+        self.canvas.bind("<KeyPress>", self._input.on_key_press)
+        self.canvas.bind("<KeyRelease>", self._input.on_key_release)
         self.root.mainloop()

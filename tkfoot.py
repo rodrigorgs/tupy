@@ -1,10 +1,12 @@
 from typing import Optional
 from inspector import Inspector
-from gui import Window
 from PIL import ImageTk, Image
+from gui import Window
+from input import InputMap
 
 global_canvas = None
 inspector = None
+input = InputMap()
 
 class Object:
     def __init__(self):
@@ -12,6 +14,7 @@ class Object:
         self._img = ImageTk.PhotoImage(Image.open(self._image_path))
         self._sprite = global_canvas.create_image(50, 50, image=self._img)
         self._angle = 0
+        self._input = input
 
     def destroy(self):
         inspector.destroy_object(self)
@@ -51,7 +54,7 @@ class Object:
         self._img = ImageTk.PhotoImage(Image.open(self._image_path).rotate(value))
         global_canvas.itemconfig(self._sprite, image=self._img)
 
-window = Window(inspector=inspector, common_supertype=Object)
+window = Window(inspector=inspector, input=input, common_supertype=Object)
 window.create()
 global_canvas = window.canvas
 
