@@ -97,16 +97,24 @@ class Window:
         console.bind("<Return>", self.submit_console)
         return console
 
-    def run_command(self, command, on_end=lambda: None):
+    def run_command(self, command, on_end=lambda: None, use_eval=False):
+        ret = None
         try:
             f = io.StringIO()
             g = io.StringIO()
             with redirect_stdout(f):
                 with redirect_stderr(g):
-                    exec(command, self._inspector._env)
+                    if use_eval:
+                        ret = eval(command, self._inspector._env)
+                    else:
+                        exec(command, self._inspector._env)
             s1 = f.getvalue()
             s2 = g.getvalue()
-            self.write_on_history(f'>>> {command}\n')
+            ret_suffix = ''
+            if use_eval and ret is not None:
+                ret_suffix = ' => ' + repr(ret)
+            ret and (" => " + str(ret)) or ""
+            self.write_on_history(f'>>> {command}{ret_suffix}\n')
             self.write_on_history(f'{s1}{s2}')
             self.update_object_pane()
         except Exception:
@@ -114,6 +122,8 @@ class Window:
             self.write_on_history(tb)
         finally:
             on_end()
+        
+        return ret
 
     def write_on_history(self, text):
         visible = self.history.bbox("end-1c")
@@ -150,7 +160,7 @@ class Window:
                 else:
                     params = simpledialog.askstring("Provide parameters", f"Comma-separated parameter list:\n{info}")
                 if params is not None:
-                    self.run_command(f'{obj_name}.{member_name}({params})')
+                    self.run_command(f'{obj_name}.{member_name}({params})', use_eval = True)
                     self.update_member_pane(obj_name)
             return callback
 
