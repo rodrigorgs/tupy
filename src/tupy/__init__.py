@@ -13,13 +13,13 @@ input = InputMap()
 
 class Object:
     def __init__(self):
-        self._image_path = self.__class__.__name__.lower() + '.png'
+        self._image_path = self._find_image_path(self.__class__.__name__.lower() + '.png')
         if not os.path.exists(self._image_path):
             self._image_path = os.path.join(pkg_resources.path('tupy', 'assets'), self._image_path)
         if not os.path.exists(self._image_path):
             self._image_path = os.path.join(pkg_resources.path('tupy', 'assets'), 'missing.png')
-
         self._img = ImageTk.PhotoImage(Image.open(self._image_path))
+
         self._sprite = global_canvas.create_image(50, 50, image=self._img)
         self._angle = 0
         self._input = input
@@ -57,10 +57,18 @@ class Object:
         return self._image_path
     @image.setter
     def image(self, value):
-        self._image_path = value
+        self._image_path = self._find_image_path(value)
         self._img = ImageTk.PhotoImage(Image.open(self._image_path))
         global_canvas.itemconfig(self._sprite, image=self._img)
         self.angle = self.angle # Rotate image if needed
+
+    def _find_image_path(self, path):
+        if not os.path.exists(path):
+            path = os.path.join(pkg_resources.path('tupy', 'assets'), path)
+        if not os.path.exists(path):
+            path = os.path.join(pkg_resources.path('tupy', 'assets'), 'missing.png')
+        return path
+
 
     @property
     def angle(self):

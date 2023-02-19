@@ -1,8 +1,14 @@
 import tkinter as tk
 import tkinter.simpledialog as simpledialog
 import tkinter.ttk as ttk
+from contextlib import redirect_stdout
+import io
 
 class Window:
+    CANVAS_WIDTH = 640
+    CANVAS_HEIGHT = 480
+    SIDE_PANE_WIDTH = 280
+
     def __init__(self, inspector, input, common_supertype):
         self._inspector = inspector
         self._common_supertype = common_supertype
@@ -10,23 +16,40 @@ class Window:
 
     def create(self):
         self.root = tk.Tk()
-        self.root.geometry("800x600")
+        # self.root.geometry("800x600")
         self.root.bind("<Escape>", lambda _event: self.root.destroy())
 
-        self.create_side_pane()
-        self.create_canvas()
-        self.create_console()
+        self.twocol = ttk.PanedWindow(self.root, orient=tk.HORIZONTAL)
+        self.twocol.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-    def create_side_pane(self):
-        self.side_pane = ttk.PanedWindow(self.root, orient=tk.VERTICAL)
-        self.side_pane.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
+        self.tworow = ttk.PanedWindow(self.twocol, orient=tk.VERTICAL)
 
-        self.create_object_pane()
-        self.create_member_pane()
+        self.canvas = self.create_canvas(self.tworow)
+        self.console = self.create_console(self.tworow)
 
-    def create_object_pane(self):
-        outer = ttk.Frame(self.side_pane, height=200)
-        self.side_pane.add(outer)
+        self.tworow.add(self.canvas)
+        self.tworow.add(self.console)
+        
+        self.side_pane = self.create_side_pane(self.twocol)
+        
+        self.twocol.add(self.tworow)
+        self.twocol.add(self.side_pane)
+        
+
+    def create_side_pane(self, parent):
+        side_pane = ttk.PanedWindow(parent, orient=tk.VERTICAL, width=self.SIDE_PANE_WIDTH)
+        side_pane.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
+
+        outer_object_pane = self.create_object_pane(side_pane)
+        self.member_pane = self.create_member_pane(side_pane)
+
+        side_pane.add(outer_object_pane)
+        side_pane.add(self.member_pane)
+        
+        return side_pane
+
+    def create_object_pane(self, parent):
+        outer = ttk.Frame(parent, height=200)
 
         canvas = tk.Canvas(outer)
         scrollbar = ttk.Scrollbar(outer, orient=tk.VERTICAL, command=canvas.yview)
@@ -41,33 +64,40 @@ class Window:
 
         self.object_pane = frame
 
-    def create_member_pane(self):
-        self.member_pane = ttk.Frame(self.side_pane)
-        self.side_pane.add(self.member_pane)
+        return outer
 
-    def create_canvas(self):
-        self.canvas = tk.Canvas(self.root, width=400, height=300, bg="white")
-        self.canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.canvas.bind("<1>", lambda event: event.widget.focus_set())
+    def create_member_pane(self, parent):
+        member_pane = ttk.Frame(parent)
+        # self.side_pane.add(self.member_pane)
+        return member_pane
 
-    def create_console(self):
-        self.console = ttk.Entry(self.root) #, bg="black", fg="white", insertbackground='white')
-        self.console.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        self.console.bind("<Return>", self.submit_console)
+    def create_canvas(self, parent):
+        canvas = tk.Canvas(parent, width=self.CANVAS_WIDTH, height=self.CANVAS_HEIGHT, bg="white")
+        canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        canvas.bind("<1>", lambda event: event.widget.focus_set())
+        return canvas
 
-    def run_command(self, command):
+    def create_console(self, parent):
+        style = ttk.Style()
+        style.configure('console.TEntry', foreground='white', background='black', insertcolor='white')
+
+        console = ttk.Entry(parent, style='console.TEntry', font=('Monaco', 16))
+        console.bind("<Return>", self.submit_console)
+        return console
+
+    def run_command(self, command, on_end=lambda: None):
         try:
-            exec(command, self._inspector._env)
+            f = io.StringIO()
+            with redirect_stdout(f):
+                exec(command, self._inspector._env)
+            s = f.getvalue()
+            print(s) # TODO: update log
             self.update_object_pane()
         finally:
-            pass
+            on_end()
 
     def submit_console(self, _event):
-        try:
-            exec(self.console.get(), self._inspector._env)
-            self.update_object_pane()
-        finally:
-            self.console.delete(0, tk.END)
+        self.run_command(self.console.get(), on_end=lambda: self.console.delete(0, tk.END))
 
     def update_object_pane(self):
         for child in self.object_pane.winfo_children():
