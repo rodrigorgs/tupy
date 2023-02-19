@@ -10,6 +10,7 @@ class Window:
     CANVAS_WIDTH = 640
     CANVAS_HEIGHT = 480
     SIDE_PANE_WIDTH = 280
+    UPDATE_DELAY = 1000 // 30
 
     def __init__(self, inspector, input, common_supertype):
         self._inspector = inspector
@@ -27,6 +28,8 @@ class Window:
         self.tworow = ttk.PanedWindow(self.twocol, orient=tk.VERTICAL)
 
         self.canvas = self.create_canvas(self.tworow)
+        self.canvas.focus_set()
+
         # self.console = self.create_console(self.tworow)
 
         self.history_and_console = ttk.Frame(self.tworow)
@@ -199,10 +202,11 @@ class Window:
             if hasattr(obj, 'update'):
                 obj.update()
         self._input.update()
-        self.root.after(50, self.run_updates)
+        # TODO: discount update time
+        self.root.after(self.UPDATE_DELAY, self.run_updates)
 
     def main_loop(self):
-        self.root.after(50, self.run_updates)
+        self.root.after(self.UPDATE_DELAY, self.run_updates)
         self.canvas.bind("<KeyPress>", self._input.on_key_press)
         self.canvas.bind("<KeyRelease>", self._input.on_key_release)
         self.root.mainloop()
