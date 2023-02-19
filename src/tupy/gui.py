@@ -66,6 +66,8 @@ class Window:
     def create_object_pane(self, parent):
         outer = ttk.Frame(parent, height=200)
 
+        ttk.Label(outer, text="Objects", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, pady=3)
+
         canvas = tk.Canvas(outer)
         scrollbar = ttk.Scrollbar(outer, orient=tk.VERTICAL, command=canvas.yview)
 
