@@ -106,6 +106,7 @@ class Window:
                     exec(command, self._inspector._env)
             s1 = f.getvalue()
             s2 = g.getvalue()
+            self.write_on_history(f'>>> {command}\n')
             self.write_on_history(f'{s1}{s2}')
             self.update_object_pane()
         except Exception:
