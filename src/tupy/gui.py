@@ -1,8 +1,10 @@
 import tkinter as tk
+from tkinter.scrolledtext import ScrolledText
 import tkinter.simpledialog as simpledialog
 import tkinter.ttk as ttk
-from contextlib import redirect_stdout
+from contextlib import redirect_stdout, redirect_stderr
 import io
+import traceback
 
 class Window:
     CANVAS_WIDTH = 640
@@ -25,10 +27,20 @@ class Window:
         self.tworow = ttk.PanedWindow(self.twocol, orient=tk.VERTICAL)
 
         self.canvas = self.create_canvas(self.tworow)
-        self.console = self.create_console(self.tworow)
+        # self.console = self.create_console(self.tworow)
+
+        self.history_and_console = ttk.Frame(self.tworow)
+        self.history_and_console.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        
+        self.console = self.create_console(self.history_and_console)
+        self.history = ScrolledText(self.history_and_console, height=5, font=('Monaco', 14), background='black', foreground='white', wrap=tk.WORD)
+        self.history.config(state=tk.DISABLED)
+        self.history.bind("<1>", lambda event: event.widget.focus_set())
+        self.history.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.console.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=False)
 
         self.tworow.add(self.canvas)
-        self.tworow.add(self.console)
+        self.tworow.add(self.history_and_console)
         
         self.side_pane = self.create_side_pane(self.twocol)
         
@@ -88,13 +100,27 @@ class Window:
     def run_command(self, command, on_end=lambda: None):
         try:
             f = io.StringIO()
+            g = io.StringIO()
             with redirect_stdout(f):
-                exec(command, self._inspector._env)
-            s = f.getvalue()
-            print(s) # TODO: update log
+                with redirect_stderr(g):
+                    exec(command, self._inspector._env)
+            s1 = f.getvalue()
+            s2 = g.getvalue()
+            self.write_on_history(f'{s1}{s2}')
             self.update_object_pane()
+        except Exception:
+            tb = traceback.format_exc()
+            self.write_on_history(tb)
         finally:
             on_end()
+
+    def write_on_history(self, text):
+        visible = self.history.bbox("end-1c")
+        self.history.config(state=tk.NORMAL)
+        self.history.insert(tk.END, text)
+        if visible is not None:
+            self.history.see(tk.END)
+        self.history.config(state=tk.DISABLED)
 
     def submit_console(self, _event):
         self.run_command(self.console.get(), on_end=lambda: self.console.delete(0, tk.END))
