@@ -10,6 +10,15 @@ import traceback
 from tupy.history import CommandHistory
 import tupy
 
+def create_treeview_with_scrollbar(parent):
+    frame = ttk.Frame(parent)
+    treeview = ttk.Treeview(frame)
+    scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=treeview.yview)
+    treeview.configure(yscrollcommand=scrollbar.set)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    treeview.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    return (treeview, frame)
+
 class Window:
     CANVAS_WIDTH = 640
     CANVAS_HEIGHT = 480
@@ -74,25 +83,37 @@ class Window:
 
     def create_object_pane(self, parent):
         outer = ttk.Frame(parent, height=200)
+        outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         ttk.Label(outer, text="Objects", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, pady=3)
+        treeview, frame = create_treeview_with_scrollbar(outer)
+        treeview.configure(columns=('name', 'class'), show='headings')
+        treeview.column('name', stretch=tk.YES, width=50)
+        treeview.column('class', stretch=tk.YES, width=50)
+        treeview.heading('name', text='Name')
+        treeview.heading('class', text='Class')
+        frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         ttk.Button(outer, text="New object", command=self.ask_create_object).pack(side=tk.BOTTOM, fill=tk.X, pady=3)
 
-        canvas = tk.Canvas(outer)
-        scrollbar = ttk.Scrollbar(outer, orient=tk.VERTICAL, command=canvas.yview)
-
-        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        canvas.configure(yscrollcommand=scrollbar.set)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-        frame = ttk.Frame(canvas)
-        frame.bind("<Configure>", lambda event: canvas.configure(scrollregion=canvas.bbox("all")))
-        canvas.create_window((0, 0), window=frame, anchor="nw")
-
-        self.object_pane = frame
-
-
+        self.object_pane = treeview
         return outer
+
+
+        # canvas = tk.Canvas(outer)
+        # scrollbar = ttk.Scrollbar(outer, orient=tk.VERTICAL, command=canvas.yview)
+
+        # canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # canvas.configure(yscrollcommand=scrollbar.set)
+        # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # frame = ttk.Frame(canvas)
+        # frame.bind("<Configure>", lambda event: canvas.configure(scrollregion=canvas.bbox("all")))
+        # canvas.create_window((0, 0), window=frame, anchor="nw")
+
+        # self.object_pane = frame
+
+
+        # return outer
 
     # TODO: currently does not support parameters in the constructor
     def ask_create_object(self):        
@@ -191,19 +212,37 @@ class Window:
             self.canvas.itemconfig(self._selection_box, outline='darkgray', dash=(5, 5))
             self.canvas.tag_raise(self._selection_box)
 
-    def update_object_pane(self):
-        for child in self.object_pane.winfo_children():
-            child.destroy()
-        for var in self._inspector.public_variables(type=self._common_supertype):
-            def make_callback(var):
-                def callback(event):
-                    self.select_object(self._inspector.object_for_variable(var))
-                    self.update_member_pane(var)
-                return callback
+    def on_click_object(self, tree):
+        index = tree.selection()[0]
+        item = tree.item(index)
+        obj_name = item['values'][0]
+        if obj_name == '':
+            self.select_object(None)
+        else:
+            self.select_object(self._inspector.object_for_variable(obj_name))
+        self.update_member_pane(obj_name)
 
-            label = ttk.Label(self.object_pane, text=f'{var}: {type(self._inspector.object_for_variable(var)).__name__}')
-            label.bind('<Button-1>', make_callback(var))
-            label.pack(padx=5, anchor=tk.W)
+    def update_object_pane(self):
+        self.object_pane.delete(*self.object_pane.get_children())
+        
+        # for child in self.object_pane.winfo_children():
+        #     child.destroy()
+        for var in [''] + self._inspector.public_variables(type=self._common_supertype):
+            if var == '':
+                values = ('', '')
+            else:
+                values = (var, type(self._inspector.object_for_variable(var)).__name__)
+            self.object_pane.insert('', 'end', text=var, values=values)
+            self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
+        #     def make_callback(var):
+        #         def callback(event):
+        #             self.select_object(self._inspector.object_for_variable(var))
+        #             self.update_member_pane(var)
+        #         return callback
+
+            # label = ttk.Label(self.object_pane, text=f'{var}: {type(self._inspector.object_for_variable(var)).__name__}')
+            # label.bind('<Button-1>', make_callback(var))
+            # label.pack(padx=5, anchor=tk.W)
 
     def on_click_member(self, tree, obj_name):
         index = tree.selection()[0]
