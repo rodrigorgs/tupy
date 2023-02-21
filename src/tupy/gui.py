@@ -6,9 +6,7 @@ import tkinter.simpledialog as simpledialog
 import tkinter.ttk as ttk
 from contextlib import redirect_stdout, redirect_stderr
 import io
-import traceback
 from tupy.history import CommandHistory
-import tupy
 
 def create_treeview_with_scrollbar(parent):
     frame = ttk.Frame(parent)
