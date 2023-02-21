@@ -98,23 +98,6 @@ class Window:
         self.object_pane = treeview
         return outer
 
-
-        # canvas = tk.Canvas(outer)
-        # scrollbar = ttk.Scrollbar(outer, orient=tk.VERTICAL, command=canvas.yview)
-
-        # canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        # canvas.configure(yscrollcommand=scrollbar.set)
-        # scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-        # frame = ttk.Frame(canvas)
-        # frame.bind("<Configure>", lambda event: canvas.configure(scrollregion=canvas.bbox("all")))
-        # canvas.create_window((0, 0), window=frame, anchor="nw")
-
-        # self.object_pane = frame
-
-
-        # return outer
-
     # TODO: currently does not support parameters in the constructor
     def ask_create_object(self):        
         classname = simpledialog.askstring("Class name", f"Enter the name of the class to instantiate:")
