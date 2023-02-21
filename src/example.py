@@ -1,7 +1,9 @@
 import tupy
 
 class Mundo(tupy.Image):
-    pass
+    def test(self, x=10, y=20):
+        self.x += x
+        self.y += y
 
 m = Mundo()
 
