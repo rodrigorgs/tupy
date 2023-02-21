@@ -35,7 +35,6 @@ class Window:
 
     def create(self):
         self.root = tk.Tk()
-        # self.root.geometry("800x600")
         self.root.bind("<Escape>", lambda _event: self.root.destroy())
 
         self.twocol = ttk.PanedWindow(self.root, orient=tk.HORIZONTAL)
@@ -47,8 +46,6 @@ class Window:
         self.canvas.focus_set()
 
         self._selection_box = self.canvas.create_rectangle(0, 0, 0, 0, outline='')
-
-        # self.console = self.create_console(self.tworow)
 
         self.history_and_console = ttk.Frame(self.tworow)
         self.history_and_console.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -121,7 +118,6 @@ class Window:
 
     def create_member_pane(self, parent):
         member_pane = ttk.Frame(parent)
-        # self.side_pane.add(self.member_pane)
         return member_pane
 
     def create_canvas(self, parent):
@@ -217,8 +213,6 @@ class Window:
     def update_object_pane(self):
         self.object_pane.delete(*self.object_pane.get_children())
         
-        # for child in self.object_pane.winfo_children():
-        #     child.destroy()
         for var in [''] + self._inspector.public_variables(type=self._common_supertype):
             if var == '':
                 values = ('', '')
@@ -226,15 +220,6 @@ class Window:
                 values = (var, type(self._inspector.object_for_variable(var)).__name__)
             self.object_pane.insert('', 'end', text=var, values=values)
             self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
-        #     def make_callback(var):
-        #         def callback(event):
-        #             self.select_object(self._inspector.object_for_variable(var))
-        #             self.update_member_pane(var)
-        #         return callback
-
-            # label = ttk.Label(self.object_pane, text=f'{var}: {type(self._inspector.object_for_variable(var)).__name__}')
-            # label.bind('<Button-1>', make_callback(var))
-            # label.pack(padx=5, anchor=tk.W)
 
     def on_click_member(self, tree, obj_name):
         index = tree.selection()[0]
@@ -270,7 +255,6 @@ class Window:
         cols = ('name', 'value', 'class')
         tree, tree_frame = create_treeview_with_scrollbar(self.member_pane)
         tree.configure(columns=cols, show='headings', height=6)
-        # tree = ttk.Treeview(self.member_pane, columns=cols, show='headings', height=6)
         tree.column('name', stretch=tk.YES, width=50)
         tree.column('value', stretch=tk.YES, width=50)
         tree.column('class', stretch=tk.YES, width=50)
