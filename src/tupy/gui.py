@@ -205,7 +205,7 @@ class Window:
             obj = self._inspector.object_for_variable(obj_name)
             
             for attr in self._inspector.get_public_attributes(obj):
-                tuple = (attr, str(getattr(obj, attr)), type(getattr(obj, attr)).__name__)
+                tuple = (attr, repr(getattr(obj, attr)), type(getattr(obj, attr)).__name__)
                 tree.insert('', tk.END, values=tuple)
 
             for method in self._inspector.get_public_methods(obj):
