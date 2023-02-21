@@ -12,7 +12,12 @@ inspector: Optional[Inspector] = None
 input = InputMap()
 
 class Object:
-    def __init__(self):
+    def __new__(cls):
+        self = super().__new__(cls)
+        self._initialize()
+        return self
+
+    def _initialize(self):
         self._image_path = self._find_image_path(self.__class__.__name__.lower() + '.png')
         if not os.path.exists(self._image_path):
             self._image_path = os.path.join(pkg_resources.path('tupy', 'assets'), self._image_path)

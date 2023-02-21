@@ -7,7 +7,6 @@ m = Mundo()
 
 class Carro(tupy.Object):
     def __init__(self):
-        super().__init__()
         self.stars = []
 
     def update(self):
