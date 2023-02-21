@@ -2,6 +2,7 @@ from typing import Optional
 from PIL import ImageTk, Image as PILImage
 import importlib.resources as pkg_resources
 import os
+import random
 
 from tupy.gui import Window
 from tupy.input import InputMap
@@ -160,11 +161,11 @@ class Rectangle(TupyObject):
     
 
 class Image(TupyObject):
-    def __new__(cls, path=None, x=50, y=50):
+    def __new__(cls, path=None, x=None, y=None):
         self = super().__new__(cls)
         self._image_path = path
-        self._x = x
-        self._y = y
+        self._x = x or random.randint(0, Window.CANVAS_WIDTH)
+        self._y = y or random.randint(0, Window.CANVAS_HEIGHT)
         self._initialize()
         return self
 
