@@ -137,8 +137,10 @@ class Window:
             self.write_on_history(f'>>> {command}{ret_suffix}\n')
             self.write_on_history(f'{s1}{s2}')
             self.update_object_pane()
-        except Exception:
-            tb = traceback.format_exc()
+        except Exception as e:
+            self.write_on_history(f'>>> {command}\n')
+            # tb = traceback.format_exc()
+            tb = f'{e.__class__.__name__}: {e}'
             self.write_on_history(tb)
         finally:
             on_end()
