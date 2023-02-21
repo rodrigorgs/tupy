@@ -1,11 +1,11 @@
 import tupy
 
-class Mundo(tupy.Object):
+class Mundo(tupy.Image):
     pass
 
 m = Mundo()
 
-class Carro(tupy.Object):
+class Carro(tupy.Image):
     def __init__(self):
         self.stars = []
 
@@ -40,7 +40,7 @@ class Carro(tupy.Object):
             s.destroy()
         self.stars = []
 
-class Star(tupy.Object):
+class Star(tupy.Image):
     def __init__(self, x=0, y=0):
         super().__init__()
         self.contador = 10
@@ -73,15 +73,16 @@ class Star(tupy.Object):
             else:
                 self.ativar()
 
+
 carro = Carro()
 carro.x = 100
 carro.y = 200
 star = Star()
 star.x = 300
 star.y = 200
-# a = Star(20, 20)
-# b = Star(50, 50)
-# c = Star(20, 50)
-# d = Star(50, 20)
+
+r = tupy.Rectangle(10, 10, 50, 50)
+t = tupy.Label('Hello World', 320, 20, font='Arial 30')
+o = tupy.Oval(100, 100, 50, 50)
 
 tupy.run(globals())
