@@ -258,15 +258,17 @@ class Window:
 
         ttk.Label(self.member_pane, text=f'{obj_name}', font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
 
-        cols = ('name', 'value', 'type')
-        tree = ttk.Treeview(self.member_pane, columns=cols, show='headings', height=6)
+        cols = ('name', 'value', 'class')
+        tree, tree_frame = create_treeview_with_scrollbar(self.member_pane)
+        tree.configure(columns=cols, show='headings', height=6)
+        # tree = ttk.Treeview(self.member_pane, columns=cols, show='headings', height=6)
         tree.column('name', stretch=tk.YES, width=50)
         tree.column('value', stretch=tk.YES, width=50)
-        tree.column('type', stretch=tk.YES, width=50)
+        tree.column('class', stretch=tk.YES, width=50)
         tree.heading('name', text='Name')
         tree.heading('value', text='Value')
-        tree.heading('type', text='Type')
-        tree.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+        tree.heading('class', text='Class')
+        tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
         if obj_name in self._inspector.public_variables(type=self._common_supertype):
             obj = self._inspector.object_for_variable(obj_name)
