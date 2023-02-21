@@ -1,3 +1,5 @@
+import random
+import string
 import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
 import tkinter.simpledialog as simpledialog
@@ -86,14 +88,15 @@ class Window:
         return outer
 
     # TODO: currently does not support parameters in the constructor
-    def ask_create_object(self):
-        variable = simpledialog.askstring("Variable name", f"Enter a name for the new object (must be a valid Python identifier):")
-        if variable is None:
-            return
-        
+    def ask_create_object(self):        
         classname = simpledialog.askstring("Class name", f"Enter the name of the class to instantiate:")
         if classname is None:
             return
+
+        variable = simpledialog.askstring("Variable name", f"Enter a name for the new object (must be a valid Python identifier) or leave empty for a random name:")
+        if variable is None or variable == '':
+            suffix = ''.join(random.choices(string.ascii_lowercase, k=4))
+            variable = f'obj_{suffix}'
 
         self._inspector.create_object(variable, classname)
         self.update_object_pane()
