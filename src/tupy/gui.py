@@ -8,6 +8,7 @@ from contextlib import redirect_stdout, redirect_stderr
 import io
 import traceback
 from tupy.history import CommandHistory
+import tupy
 
 class Window:
     CANVAS_WIDTH = 640
@@ -20,6 +21,8 @@ class Window:
         self._common_supertype = common_supertype
         self._input = input
         self._command_history = CommandHistory()
+        self._selection_box = None        
+        self._selected_object = None
 
     def create(self):
         self.root = tk.Tk()
@@ -33,6 +36,8 @@ class Window:
 
         self.canvas = self.create_canvas(self.tworow)
         self.canvas.focus_set()
+
+        self._selection_box = self.canvas.create_rectangle(0, 0, 0, 0, outline='')
 
         # self.console = self.create_console(self.tworow)
 
@@ -178,12 +183,21 @@ class Window:
     def submit_console(self, _event):
         self.run_command(self.console.get(), on_end=lambda: self.console.delete(0, tk.END))
 
+    def select_object(self, obj):
+        self._selected_object = obj
+        if obj is None:
+            self.canvas.itemconfig(self._selection_box, outline='')
+        else:
+            self.canvas.itemconfig(self._selection_box, outline='darkgray', dash=(5, 5))
+            self.canvas.tag_raise(self._selection_box)
+
     def update_object_pane(self):
         for child in self.object_pane.winfo_children():
             child.destroy()
         for var in self._inspector.public_variables(type=self._common_supertype):
             def make_callback(var):
                 def callback(event):
+                    self.select_object(self._inspector.object_for_variable(var))
                     self.update_member_pane(var)
                 return callback
 
@@ -241,6 +255,10 @@ class Window:
             if hasattr(obj, 'update'):
                 obj.update()
         self._input.update()
+        if self._selected_object is not None:
+            o = self._selected_object
+            x, y = o.top_left
+            self.canvas.coords(self._selection_box, x, y, x + o.width, y + o.height)
         # TODO: discount update time
         self.root.after(self.UPDATE_DELAY, self.run_updates)
 

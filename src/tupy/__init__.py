@@ -25,138 +25,141 @@ class TupyObject:
         ow, oh = other.width / 2, other.height / 2
         return abs(x - ox) < w + ow and abs(y - oy) < h + oh
 
+    @property
+    def top_left(self):
+        return self.x, self.y
 
 class Oval(TupyObject):
     def __init__(self, x, y, width, height, outline='black', fill=''):
-        self._oval = global_canvas.create_oval(x, y, x+width, y+height, fill=fill, outline=outline)
+        self._tkobject = global_canvas.create_oval(x, y, x+width, y+height, fill=fill, outline=outline)
     
     @property
     def x(self):
-        return global_canvas.coords(self._oval)[0]
+        return global_canvas.coords(self._tkobject)[0]
     @x.setter
     def x(self, value):
-        global_canvas.coords(self._oval, value, self.y, self.x+self.width, self.y+self.height)
+        global_canvas.coords(self._tkobject, value, self.y, self.x+self.width, self.y+self.height)
     @property
     def y(self):
-        return global_canvas.coords(self._oval)[1]
+        return global_canvas.coords(self._tkobject)[1]
     @y.setter
     def y(self, value):
-        global_canvas.coords(self._oval, self.x, value, self.x+self.width, self.y+self.height)
+        global_canvas.coords(self._tkobject, self.x, value, self.x+self.width, self.y+self.height)
     @property
     def width(self):
-        return global_canvas.coords(self._oval)[2] - self.x
+        return global_canvas.coords(self._tkobject)[2] - self.x
     @width.setter
     def width(self, value):
-        global_canvas.coords(self._oval, self.x, self.y, self.x+value, self.y+self.height)
+        global_canvas.coords(self._tkobject, self.x, self.y, self.x+value, self.y+self.height)
     @property
     def height(self):
-        return global_canvas.coords(self._oval)[3] - self.y
+        return global_canvas.coords(self._tkobject)[3] - self.y
     @height.setter
     def height(self, value):
-        global_canvas.coords(self._oval, self.x, self.y, self.x+self.width, self.y+value)
+        global_canvas.coords(self._tkobject, self.x, self.y, self.x+self.width, self.y+value)
     @property
     def fill(self):
-        return global_canvas.itemcget(self._oval, 'fill')
+        return global_canvas.itemcget(self._tkobject, 'fill')
     @fill.setter
     def fill(self, value):
-        global_canvas.itemconfig(self._oval, fill=value)
+        global_canvas.itemconfig(self._tkobject, fill=value)
     @property
     def outline(self):
-        return global_canvas.itemcget(self._oval, 'outline')
+        return global_canvas.itemcget(self._tkobject, 'outline')
     @outline.setter
     def outline(self, value):
-        global_canvas.itemconfig(self._oval, outline=value)
+        global_canvas.itemconfig(self._tkobject, outline=value)
     
     def destroy(self):
-        global_canvas.delete(self._oval)
+        global_canvas.delete(self._tkobject)
 
 class Label(TupyObject):
     def __init__(self, text, x, y, font='Arial 10', color='black', anchor='nw'):
-        self._text = global_canvas.create_text(x, y, text=text, font=font, fill=color, anchor=anchor)
+        self._tkobject = global_canvas.create_text(x, y, text=text, font=font, fill=color, anchor=anchor)
     
     @property
     def x(self):
-        return global_canvas.coords(self._text)[0]
+        return global_canvas.coords(self._tkobject)[0]
     @x.setter
     def x(self, value):
-        global_canvas.coords(self._text, value, self.y)
+        global_canvas.coords(self._tkobject, value, self.y)
     @property
     def y(self):
-        return global_canvas.coords(self._text)[1]
+        return global_canvas.coords(self._tkobject)[1]
     @y.setter
     def y(self, value):
-        global_canvas.coords(self._text, self.x, value)
+        global_canvas.coords(self._tkobject, self.x, value)
     @property
     def text(self):
-        return global_canvas.itemcget(self._text, 'text')
+        return global_canvas.itemcget(self._tkobject, 'text')
     @text.setter
     def text(self, value):
-        global_canvas.itemconfig(self._text, text=value)
+        global_canvas.itemconfig(self._tkobject, text=value)
     @property
     def font(self):
-        return global_canvas.itemcget(self._text, 'font')
+        return global_canvas.itemcget(self._tkobject, 'font')
     @font.setter
     def font(self, value):
-        global_canvas.itemconfig(self._text, font=value)
+        global_canvas.itemconfig(self._tkobject, font=value)
     @property
     def color(self):
-        return global_canvas.itemcget(self._text, 'fill')
+        return global_canvas.itemcget(self._tkobject, 'fill')
     @color.setter
     def color(self, value):
-        global_canvas.itemconfig(self._text, fill=value)
+        global_canvas.itemconfig(self._tkobject, fill=value)
     @property
     def width(self):
-        return global_canvas.bbox(self._text)[2] - self.x
+        return global_canvas.bbox(self._tkobject)[2] - self.x
     @property
     def height(self):
-        return global_canvas.bbox(self._text)[3] - self.y
+        return global_canvas.bbox(self._tkobject)[3] - self.y
     @property
     def anchor(self):
-        return global_canvas.itemcget(self._text, 'anchor')
+        return global_canvas.itemcget(self._tkobject, 'anchor')
     @anchor.setter
     def anchor(self, value):
-        global_canvas.itemconfig(self._text, anchor=value)
+        global_canvas.itemconfig(self._tkobject, anchor=value)
 
 class Rectangle(TupyObject):
     def __init__(self, x, y, w, h, outline='black', fill=''):
-        self._rect = global_canvas.create_rectangle(10, 10, 50, 50, fill='black')
+        self._tkobject = global_canvas.create_rectangle(10, 10, 50, 50, fill='black')
 
     @property
     def x(self):
-        return global_canvas.coords(self._rect)[0]
+        return global_canvas.coords(self._tkobject)[0]
     @x.setter
     def x(self, value):
-        global_canvas.coords(self._rect, value, self.y, value + self.width, self.y + self.height)
+        global_canvas.coords(self._tkobject, value, self.y, value + self.width, self.y + self.height)
     @property
     def y(self):
-        return global_canvas.coords(self._rect)[1]
+        return global_canvas.coords(self._tkobject)[1]
     @y.setter
     def y(self, value):
-        global_canvas.coords(self._rect, self.x, value, self.x + self.width, value + self.height)
+        global_canvas.coords(self._tkobject, self.x, value, self.x + self.width, value + self.height)
     @property
     def width(self):
-        return global_canvas.coords(self._rect)[2] - self.x
+        return global_canvas.coords(self._tkobject)[2] - self.x
     @width.setter
     def width(self, value):
-        global_canvas.coords(self._rect, self.x, self.y, self.x + value, self.y + self.height)
+        global_canvas.coords(self._tkobject, self.x, self.y, self.x + value, self.y + self.height)
     @property
     def height(self):
-        return global_canvas.coords(self._rect)[3] - self.y
+        return global_canvas.coords(self._tkobject)[3] - self.y
     @height.setter
     def height(self, value):
-        global_canvas.coords(self._rect, self.x, self.y, self.x + self.width, self.y + value)
+        global_canvas.coords(self._tkobject, self.x, self.y, self.x + self.width, self.y + value)
     @property
     def fill(self):
-        return global_canvas.itemcget(self._rect, 'fill')
+        return global_canvas.itemcget(self._tkobject, 'fill')
     @fill.setter
     def fill(self, value):
-        global_canvas.itemconfig(self._rect, fill=value)
+        global_canvas.itemconfig(self._tkobject, fill=value)
     @property
     def outline(self):
-        return global_canvas.itemcget(self._rect, 'outline')
+        return global_canvas.itemcget(self._tkobject, 'outline')
     @outline.setter
     def outline(self, value):
-        global_canvas.itemconfig(self._rect, outline=value)
+        global_canvas.itemconfig(self._tkobject, outline=value)
 
     
 
@@ -176,11 +179,15 @@ class Image(TupyObject):
             self._image_path = os.path.join(pkg_resources.path('tupy', 'assets'), self._image_path)
         if not os.path.exists(self._image_path):
             self._image_path = os.path.join(pkg_resources.path('tupy', 'assets'), 'missing.png')
-        self._img = ImageTk.PhotoImage(PILImage.open(self._image_path))
+        self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path))
 
-        self._sprite = global_canvas.create_image(self._x, self._y, image=self._img)
+        self._sprite = global_canvas.create_image(self._x, self._y, image=self._tkobject)
         self._angle = 0
         self._input = input
+
+    @property
+    def top_left(self):
+        return self.x - self.width / 2, self.y - self.height / 2
 
     @property
     def x(self):
@@ -200,10 +207,10 @@ class Image(TupyObject):
 
     @property
     def width(self):
-        return self._img.width()
+        return self._tkobject.width()
     @property
     def height(self):
-        return self._img.height()
+        return self._tkobject.height()
 
     @property
     def path(self):
@@ -211,8 +218,8 @@ class Image(TupyObject):
     @path.setter
     def path(self, value):
         self._image_path = self._find_image_path(value)
-        self._img = ImageTk.PhotoImage(PILImage.open(self._image_path))
-        global_canvas.itemconfig(self._sprite, image=self._img)
+        self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path))
+        global_canvas.itemconfig(self._sprite, image=self._tkobject)
         self.angle = self.angle # Rotate image if needed
 
     def _find_image_path(self, path):
@@ -229,8 +236,8 @@ class Image(TupyObject):
     @angle.setter
     def angle(self, value):
         self._angle = value
-        self._img = ImageTk.PhotoImage(PILImage.open(self._image_path).rotate(value))
-        global_canvas.itemconfig(self._sprite, image=self._img)
+        self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path).rotate(value))
+        global_canvas.itemconfig(self._sprite, image=self._tkobject)
 
 window = Window(inspector=inspector, input=input, common_supertype=TupyObject)
 window.create()
