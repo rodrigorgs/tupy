@@ -160,7 +160,7 @@ class Window:
         except Exception as e:
             self.write_on_history(f'>>> {command}\n')
             # tb = traceback.format_exc()
-            tb = f'{e.__class__.__name__}: {e}'
+            tb = f'{e.__class__.__name__}: {e}\n'
             self.write_on_history(tb)
         finally:
             on_end()
