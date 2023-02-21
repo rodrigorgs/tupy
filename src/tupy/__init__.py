@@ -15,6 +15,16 @@ class TupyObject:
     def destroy(self):
         inspector.destroy_object(self)
 
+    def collides_with(self, other):
+        if not isinstance(other, TupyObject):
+            raise TypeError('checking collision: other must be a tupy.Object')
+        x, y = self.x, self.y
+        w, h = self.width / 2, self.height / 2
+        ox, oy = other.x, other.y
+        ow, oh = other.width / 2, other.height / 2
+        return abs(x - ox) < w + ow and abs(y - oy) < h + oh
+
+
 class Oval(TupyObject):
     def __init__(self, x, y, width, height, outline='black', fill=''):
         self._oval = global_canvas.create_oval(x, y, x+width, y+height, fill=fill, outline=outline)
@@ -171,15 +181,6 @@ class Image(TupyObject):
         self._angle = 0
         self._input = input
 
-    def collides_with(self, other):
-        if not isinstance(other, TupyObject):
-            raise TypeError('checking collision: other must be a tupy.Object')
-        x, y = self.x, self.y
-        w, h = self._img.width() / 2, self._img.height() / 2
-        ox, oy = other.x, other.y
-        ow, oh = other._img.width() / 2, other._img.height() / 2
-        return abs(x - ox) < w + ow and abs(y - oy) < h + oh
-
     @property
     def x(self):
         return global_canvas.coords(self._sprite)[0]
@@ -195,6 +196,13 @@ class Image(TupyObject):
     @y.setter
     def y(self, value):
         global_canvas.coords(self._sprite, self.x, value)
+
+    @property
+    def width(self):
+        return self._img.width()
+    @property
+    def height(self):
+        return self._img.height()
 
     @property
     def path(self):
