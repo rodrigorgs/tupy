@@ -274,7 +274,10 @@ class Window:
         for child in self.member_pane.winfo_children():
             child.destroy()
 
-        ttk.Label(self.member_pane, text=f'{obj_name}', font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        if obj_name not in self._inspector.public_variables(type=self._common_supertype):
+            return
+
+        ttk.Label(self.member_pane, text=f"{obj_name}'s attributes", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
 
         cols = ('name', 'value', 'class')
         tree, tree_frame = create_treeview_with_scrollbar(self.member_pane)
@@ -287,21 +290,21 @@ class Window:
         tree.heading('class', text='Class')
         tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
-        if obj_name in self._inspector.public_variables(type=self._common_supertype):
-            obj = self._inspector.object_for_variable(obj_name)
-            
-            for attr in self._inspector.get_public_attributes(obj):
-                tuple = (attr, repr(getattr(obj, attr)), type(getattr(obj, attr)).__name__)
-                tree.insert('', tk.END, values=tuple)
-                tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
+        obj = self._inspector.object_for_variable(obj_name)
+        
+        for attr in self._inspector.get_public_attributes(obj):
+            tuple = (attr, repr(getattr(obj, attr)), type(getattr(obj, attr)).__name__)
+            tree.insert('', tk.END, values=tuple)
+            tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
 
-            for method in self._inspector.get_public_methods(obj):
-                if method in ('update', ):
-                    continue
-                params = self._inspector.method_parameters(self._inspector.get_method(obj, method))
-                button = ttk.Button(self.member_pane, text=f'{method}({", ".join(params)})',
-                                    command=make_callback(obj_name, method))
-                button.pack(anchor=tk.W, padx=5)
+        ttk.Label(self.member_pane, text=f"{obj_name}'s methods", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        for method in self._inspector.get_public_methods(obj):
+            if method in ('update', ):
+                continue
+            params = self._inspector.method_parameters(self._inspector.get_method(obj, method))
+            button = ttk.Button(self.member_pane, text=f'{method}({", ".join(params)})',
+                                command=make_callback(obj_name, method))
+            button.pack(anchor=tk.W, padx=5)
 
     def update_objects(self):
         for obj in self._inspector.public_objects(type=self._common_supertype):
