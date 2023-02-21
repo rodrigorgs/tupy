@@ -26,7 +26,7 @@ class TupyObject:
         return abs(x - ox) < w + ow and abs(y - oy) < h + oh
 
     @property
-    def top_left(self):
+    def _top_left(self):
         return self.x, self.y
 
 class Oval(TupyObject):
@@ -186,7 +186,7 @@ class Image(TupyObject):
         self._input = input
 
     @property
-    def top_left(self):
+    def _top_left(self):
         return self.x - self.width / 2, self.y - self.height / 2
 
     @property
