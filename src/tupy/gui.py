@@ -30,11 +30,14 @@ class Window:
         self._command_history = CommandHistory()
         self._selection_box = None        
         self._selected_object = None
+        self.is_paused = False
 
     def create(self):
         self.root = tk.Tk()
         self.root.bind("<Escape>", lambda _event: self.root.destroy())
 
+        self.toolbar = self.create_toolbar(self.root)
+        self.toolbar.pack(side=tk.TOP, fill=tk.X, pady=3)
         self.twocol = ttk.PanedWindow(self.root, orient=tk.HORIZONTAL)
         self.twocol.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
@@ -68,6 +71,29 @@ class Window:
         self.twocol.add(self.tworow)
         self.twocol.add(self.side_pane)
         
+    def play(self):
+        self.is_paused = False
+    def pause(self):
+        self.is_paused = True
+    def step(self):
+        self.is_paused = True
+        self.update_objects()
+
+    def create_toolbar(self, parent):
+        toolbar = ttk.Frame(parent, height=30)
+
+        button_run = ttk.Button(toolbar, text="▶", command=self.play)
+        button_pause = ttk.Button(toolbar, text="❙❙", command=self.pause)
+        button_step = ttk.Button(toolbar, text="▶❙", command=self.step)
+
+        button_run.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
+        button_pause.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
+        button_step.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
+
+        self.button_pause = button_pause
+
+        toolbar.pack(side=tk.TOP, fill=tk.X, expand=False)
+        return toolbar
 
     def create_side_pane(self, parent):
         side_pane = ttk.PanedWindow(parent, orient=tk.VERTICAL, width=self.SIDE_PANE_WIDTH)
@@ -277,10 +303,15 @@ class Window:
                                     command=make_callback(obj_name, method))
                 button.pack(anchor=tk.W, padx=5)
 
-    def run_updates(self):
+    def update_objects(self):
         for obj in self._inspector.public_objects(type=self._common_supertype):
             if hasattr(obj, 'update'):
                 obj.update()
+
+    def run_updates(self):
+        if not self.is_paused:
+            self.update_objects()
+
         self._input.update()
         if self._selected_object is not None:
             o = self._selected_object
