@@ -167,12 +167,12 @@ class Image(TupyObject):
     def __new__(cls, path=None, x=None, y=None):
         self = super().__new__(cls)
         self._image_path = path
-        self._x = x or random.randint(0, Window.CANVAS_WIDTH)
-        self._y = y or random.randint(0, Window.CANVAS_HEIGHT)
-        self._initialize()
+        x = x or random.randint(0, Window.CANVAS_WIDTH)
+        y = y or random.randint(0, Window.CANVAS_HEIGHT)
+        self._initialize(x, y)
         return self
 
-    def _initialize(self):
+    def _initialize(self, x, y):
         if self._image_path is None:
             self._image_path = self._find_image_path(self.__class__.__name__.lower() + '.png')
         if not os.path.exists(self._image_path):
@@ -181,7 +181,7 @@ class Image(TupyObject):
             self._image_path = os.path.join(pkg_resources.path('tupy', 'assets'), 'missing.png')
         self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path))
 
-        self._sprite = global_canvas.create_image(self._x, self._y, image=self._tkobject)
+        self._sprite = global_canvas.create_image(x, y, image=self._tkobject)
         self._angle = 0
         self._input = input
 
