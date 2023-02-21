@@ -7,6 +7,7 @@ import tkinter.ttk as ttk
 from contextlib import redirect_stdout, redirect_stderr
 import io
 import traceback
+from tupy.history import CommandHistory
 
 class Window:
     CANVAS_WIDTH = 640
@@ -18,6 +19,7 @@ class Window:
         self._inspector = inspector
         self._common_supertype = common_supertype
         self._input = input
+        self._command_history = CommandHistory()
 
     def create(self):
         self.root = tk.Tk()
@@ -118,9 +120,24 @@ class Window:
 
         console = ttk.Entry(parent, style='console.TEntry', font=('Monaco', 16))
         console.bind("<Return>", self.submit_console)
+        console.bind("<Up>", self.history_up)
+        console.bind("<Down>", self.history_down)
         return console
 
+    def history_up(self, event):
+        command = self._command_history.previous()
+        self.console.delete(0, tk.END)
+        if command is not None:
+            self.console.insert(0, command)
+
+    def history_down(self, event):
+        command = self._command_history.next()
+        self.console.delete(0, tk.END)
+        if command is not None:
+            self.console.insert(0, command)
+
     def run_command(self, command, on_end=lambda: None, use_eval=False):
+        self._command_history.add(command)
         ret = None
         try:
             f = io.StringIO()
