@@ -205,6 +205,17 @@ class Window:
             label.bind('<Button-1>', make_callback(var))
             label.pack(padx=5, anchor=tk.W)
 
+    def on_click_member(self, tree, obj_name):
+        index = tree.selection()[0]
+        item = tree.item(index)
+        attr_name = item['values'][0]
+        value = item['values'][1]
+        new_value_str = simpledialog.askstring('Set value', f'New value for {attr_name}:', initialvalue=value)
+        if new_value_str is not None:
+            new_value = eval(new_value_str)
+            setattr(self._selected_object, attr_name, new_value)
+            self.update_member_pane(obj_name)
+
     def update_member_pane(self, obj_name):
         def make_callback(obj_name, member_name):
             def callback():
@@ -241,6 +252,7 @@ class Window:
             for attr in self._inspector.get_public_attributes(obj):
                 tuple = (attr, repr(getattr(obj, attr)), type(getattr(obj, attr)).__name__)
                 tree.insert('', tk.END, values=tuple)
+                tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
 
             for method in self._inspector.get_public_methods(obj):
                 if method in ('update', ):
