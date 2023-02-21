@@ -56,6 +56,11 @@ class Window:
         self.console = self.create_console(self.history_and_console)
         self.history = ScrolledText(self.history_and_console, height=5, font=('Monaco', 14), background='black', foreground='white', wrap=tk.WORD)
         self.history.config(state=tk.DISABLED)
+        self.history.tag_config('error', foreground='#ff4136')
+        self.history.tag_config('output', foreground='#00BFFF')
+        self.history.tag_config('command', foreground='white')
+        self.history.tag_config('pale', foreground='darkgray')
+
         self.history.bind("<1>", lambda event: event.widget.focus_set())
         self.history.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.console.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=False)
@@ -159,29 +164,31 @@ class Window:
                         ret = eval(command, self._inspector._env)
                     else:
                         exec(command, self._inspector._env)
-            s1 = f.getvalue()
-            s2 = g.getvalue()
+            out = f.getvalue()
+            err = g.getvalue()
             ret_suffix = ''
-            if use_eval and ret is not None:
-                ret_suffix = ' => ' + repr(ret)
             ret and (" => " + str(ret)) or ""
-            self.write_on_history(f'>>> {command}{ret_suffix}\n')
-            self.write_on_history(f'{s1}{s2}')
+            self.write_on_history(f'>>> {command.strip()}', tag='command')
+            if use_eval and ret is not None:
+                self.write_on_history(' => ', tag='pale')
+                self.write_on_history(repr(ret), tag='output')
+            self.write_on_history(f'\n{out}', tag='output')
+            self.write_on_history(f'{err}', tag='error')
             self.update_object_pane()
         except Exception as e:
-            self.write_on_history(f'>>> {command}\n')
+            self.write_on_history(f'>>> {command}\n', tag='command')
             # tb = traceback.format_exc()
             tb = f'{e.__class__.__name__}: {e}\n'
-            self.write_on_history(tb)
+            self.write_on_history(tb, tag='error')
         finally:
             on_end()
         
         return ret
 
-    def write_on_history(self, text):
+    def write_on_history(self, text, tag='command'):
         visible = self.history.bbox("end-1c")
         self.history.config(state=tk.NORMAL)
-        self.history.insert(tk.END, text)
+        self.history.insert(tk.END, text, tag)
         if visible is not None:
             self.history.see(tk.END)
         self.history.config(state=tk.DISABLED)
