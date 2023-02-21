@@ -67,6 +67,7 @@ class Window:
         outer = ttk.Frame(parent, height=200)
 
         ttk.Label(outer, text="Objects", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, pady=3)
+        ttk.Button(outer, text="New object", command=self.ask_create_object).pack(side=tk.BOTTOM, fill=tk.X, pady=3)
 
         canvas = tk.Canvas(outer)
         scrollbar = ttk.Scrollbar(outer, orient=tk.VERTICAL, command=canvas.yview)
@@ -81,7 +82,21 @@ class Window:
 
         self.object_pane = frame
 
+
         return outer
+
+    # TODO: currently does not support parameters in the constructor
+    def ask_create_object(self):
+        variable = simpledialog.askstring("Variable name", f"Enter a name for the new object (must be a valid Python identifier):")
+        if variable is None:
+            return
+        
+        classname = simpledialog.askstring("Class name", f"Enter the name of the class to instantiate:")
+        if classname is None:
+            return
+
+        self._inspector.create_object(variable, classname)
+        self.update_object_pane()
 
     def create_member_pane(self, parent):
         member_pane = ttk.Frame(parent)

@@ -38,3 +38,6 @@ class Inspector:
         if method.__doc__ is not None:
             s += method.__doc__
         return s
+    
+    def create_object(self, variable, classname):
+        exec(f'{variable} = {classname}()', self._env)
