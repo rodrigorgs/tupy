@@ -15,19 +15,18 @@ pip install git+https://github.com/rodrigorgs/tupy.git
 Here's a simple program that uses Tupy:
 
 ```python
-import tupy
+from tupy import *
 
-class Star(tupy.Object):
+class Star(Image):
 	def update(self):
-		self.x += 5
-		self.y += 5
+		self.y += 2
 
 star1 = Star()
 star2 = Star()
-star1.x = 30
-star2.x = 80
+star1.x = 100
+star2.x = 200
 
-tupy.run(globals())
+run(globals())
 ```
 
 You will also need an image file named `star.png` in the same folder as your source code.
