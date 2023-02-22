@@ -4,7 +4,7 @@ Tupy is a graphical environment in which people can experiment with Python objec
 
 ## Installing
 
-To install Tupy, run the following command:
+To install the latest version of Tupy, run the following command:
 
 ```sh
 pip install git+https://github.com/rodrigorgs/tupy.git
@@ -29,4 +29,26 @@ star2.x = 200
 run(globals())
 ```
 
-You will also need an image file named `star.png` in the same folder as your source code.
+Save the file as a Python script and run it. For instance, if the file name is `example.py`, run it like this:
+
+```sh
+python example.py
+```
+
+All instances of the `Star` class will be displayed as the `star.png` image provided by Tupy; to customize the image, create a `star.png` image in the same folder as your script.
+
+## Hot reload
+
+Hot reload allows you to change your code while it's running and see the results without restarting your script. You can achieve hot reload with the Jurigged package.
+
+To install Jurigged:
+
+```sh
+pip install jurigged
+```
+
+To run the `example.py` using hot reload:
+
+```sh
+jurigged example.py
+```
