@@ -85,10 +85,12 @@ class Window:
         button_run = ttk.Button(toolbar, text="▶", command=self.play)
         button_pause = ttk.Button(toolbar, text="❙❙", command=self.pause)
         button_step = ttk.Button(toolbar, text="▶❙", command=self.step)
+        button_add = ttk.Button(toolbar, text="➕ New object...", command=self.ask_create_object)
 
         button_run.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
         button_pause.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
         button_step.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
+        button_add.pack(side=tk.RIGHT, padx=3, ipadx=2, ipady=2)
 
         self.button_pause = button_pause
 
@@ -119,7 +121,7 @@ class Window:
         treeview.heading('name', text='Name')
         treeview.heading('class', text='Class')
         frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        ttk.Button(outer, text="New object", command=self.ask_create_object).pack(side=tk.BOTTOM, fill=tk.X, pady=3)
+        # ttk.Button(outer, text="New object", command=self.ask_create_object).pack(side=tk.BOTTOM, fill=tk.X, pady=3)
 
         self.object_pane = treeview
         return outer
