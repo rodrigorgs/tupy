@@ -126,7 +126,6 @@ class Window:
         self.object_pane = treeview
         return outer
 
-    # TODO: currently does not support parameters in the constructor
     def ask_create_object(self):        
         variable = simpledialog.askstring("Variable name", f"Enter a name for the new object\n(must be a valid Python identifier)\nor leave empty for a random name:")
         if variable is None:
@@ -139,7 +138,17 @@ class Window:
         if classname is None:
             return
 
-        self._inspector.create_object(variable, classname)
+        # check number of parameters
+        klass = self._inspector.object_for_variable(classname)
+        method = self._inspector.get_method(klass, '__init__')
+        params = self._inspector.method_parameters(method)
+        info = self._inspector.method_info(method)
+        args = ''
+        
+        if len(params) > 0:
+            args = simpledialog.askstring("Constructor parameters", f"Enter the parameters for the constructor of {classname}:\n{info}")
+
+        self._inspector.create_object(variable, classname, args)
         self.update_object_pane()
 
     def create_member_pane(self, parent):

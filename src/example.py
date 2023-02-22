@@ -1,11 +1,15 @@
 import tupy
 
 class Mundo(tupy.Image):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        
     def test(self, x=10, y=20):
         self.x += x
         self.y += y
 
-m = Mundo()
+m = Mundo(x=400, y=300)
 
 class Carro(tupy.Image):
     def __init__(self):

@@ -39,5 +39,5 @@ class Inspector:
             s += method.__doc__
         return s
     
-    def create_object(self, variable, classname):
-        exec(f'{variable} = {classname}()', self._env)
+    def create_object(self, variable, classname, args=''):
+        exec(f'{variable} = {classname}({args})', self._env)
