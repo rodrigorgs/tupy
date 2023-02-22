@@ -1,94 +1,31 @@
-import tupy
+from tupy import *
 
-class Mundo(tupy.Image):
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        
-    def test(self, x=10, y=20):
-        self.x += x
-        self.y += y
-
-m = Mundo(x=400, y=300)
-
-class Carro(tupy.Image):
-    def __init__(self):
-        self.stars = []
-
+class Drone(Image):
     def update(self):
-        if self._input.is_key_down('Right'):
+        if input.is_key_down('Right'):
             self.x += 10
-        if self._input.is_key_down('Left'):
+        if input.is_key_down('Left'):
             self.x -= 10
-        if self._input.is_key_down('Up'):
+        if input.is_key_down('Up'):
             self.y -= 10
-        if self._input.is_key_down('Down'):
+        if input.is_key_down('Down'):
             self.y += 10
-        if self._input.is_key_just_down('Return'):
-            self.angle += 45
-        if self._input.is_key_just_down('space'):
-            self.dispara()
-        for s in self.stars:
-            s.update()
-        
-        if self.collides_with(star):
-            self.reinicia()
 
-    def dispara(self):
-        s = Star()
-        s.x = self.x
-        s.y = self.y
-        self.stars.append(s)
-
-    def reinicia(self):
-        self.x = 100
-        for s in self.stars:
-            s.destroy()
-        self.stars = []
-
-class Star(tupy.Image):
-    def __init__(self, x=0, y=0):
-        super().__init__()
-        self.contador = 10
-        self.ativado = True
-    
-    def set(self, contador, ativado):
-        '''
-        altera o contador e o estado
-        '''
-        self.contador = contador
-        self.ativado = ativado
-        if ativado:
-            self.ativar()
-        else:
-            self.desativar()
-
-    def desativar(self):
-        self.image = 'star2.png'
-        self.ativado = False
-    def ativar(self):
-        self.image = 'star.png'
-        self.ativado = True
+class Star(Image):
     def update(self):
-        self.angle = (self.angle + 10) % 360
-        self.contador -= 1
-        if self.contador == 0:
-            self.contador = 10
-            if self.ativado:
-                self.desativar()
-            else:
-                self.ativar()
+        self.angle = (self.angle + 5) % 360
+        if self.collides_with(drone):
+            self.destroy()
 
+if __name__ == '__main__':
+    drone = Drone()
+    star1 = Star()
+    star2 = Star()
+    star3 = Star()
+    star4 = Star()
 
-carro = Carro()
-carro.x = 100
-carro.y = 200
-star = Star()
-star.x = 300
-star.y = 200
+    rect = Rectangle(0, 0, 640, 40, fill='lightgray', outline='')
+    circle = Oval(5, 5, 30, 30, fill='darkgreen', outline='')
+    score = Label('Score: 0', 40, 10, font='Arial 20')
 
-r = tupy.Rectangle(10, 10, 50, 50)
-t = tupy.Label('Hello World', 320, 20, font='Arial 30')
-o = tupy.Oval(100, 100, 50, 50)
-
-tupy.run(globals())
+    run(globals())
