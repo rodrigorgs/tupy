@@ -16,6 +16,16 @@ class Star(Image):
         self.angle = (self.angle + 5) % 360
         if self.collides_with(drone):
             self.destroy()
+            score.increment()
+
+class Score(Label):
+    def __init__(self) -> None:
+        super().__init__('Score: 0', 40, 9, font='Arial 20')
+        self.score = 0
+    
+    def increment(self):
+        self.score += 1
+        self.text = f'Score: {self.score}'
 
 if __name__ == '__main__':
     drone = Drone()
@@ -26,6 +36,6 @@ if __name__ == '__main__':
 
     rect = Rectangle(0, 0, 640, 40, fill='lightgray', outline='')
     circle = Oval(5, 5, 30, 30, fill='darkgreen', outline='')
-    score = Label('Score: 0', 40, 10, font='Arial 20')
+    score = Score()
 
     run(globals())
