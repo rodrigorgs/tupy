@@ -122,7 +122,7 @@ class Label(TupyObject):
 
 class Rectangle(TupyObject):
     def __init__(self, x, y, w, h, outline='black', fill=''):
-        self._tkobject = global_canvas.create_rectangle(10, 10, 50, 50, fill='black')
+        self._tkobject = global_canvas.create_rectangle(x, y, x + w, y + h, outline=outline, fill=fill)
 
     @property
     def x(self):
