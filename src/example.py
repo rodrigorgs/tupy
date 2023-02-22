@@ -10,6 +10,10 @@ class Drone(Image):
             self.y -= 10
         if input.is_key_down('Down'):
             self.y += 10
+        
+        if input.is_mouse_just_down():
+            self.x = input.mouse_x
+            self.y = input.mouse_y
 
 class Star(Image):
     def update(self):
@@ -27,6 +31,9 @@ class Score(Label):
         self.score += 1
         self.text = f'Score: {self.score}'
 
+    def update(self):
+        coords.text = f'{input.mouse_x}, {input.mouse_y}'
+
 if __name__ == '__main__':
     drone = Drone()
     star1 = Star()
@@ -37,5 +44,6 @@ if __name__ == '__main__':
     rect = Rectangle(0, 0, 640, 40, fill='lightgray', outline='')
     circle = Oval(5, 5, 30, 30, fill='darkgreen', outline='')
     score = Score()
+    coords = Label('0, 0', 300, 9, font='Arial 20')
 
     run(globals())

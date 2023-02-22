@@ -7,7 +7,31 @@ class InputMap:
         # = 1: button down (but not just down)
         # > 0 and < 1: just up (used for debouncing)
         self.keymap: dict = {}
-    
+        # 2 = just pressed
+        # 1 = pressed
+        # 0 = released
+        self.mouse_button = 0
+        self.mouse_location = (0, 0)
+
+
+    def on_mouse_press(self, event):
+        self.mouse_button = 2
+    def on_mouse_release(self, event):
+        self.mouse_button = 0
+    def on_mouse_move(self, event):
+        self.mouse_location = (event.x, event.y)
+
+    def is_mouse_down(self):
+        return self.mouse_button >= 1
+    def is_mouse_just_down(self):
+        return self.mouse_button == 2
+    @property
+    def mouse_x(self):
+        return self.mouse_location[0]
+    @property
+    def mouse_y(self):
+        return self.mouse_location[1]
+
     def on_key_press(self, event):
         # print('keypress', event.keysym, self.keymap.get(event.keysym, 0))
         if self.keymap.get(event.keysym, 0) == 0:
@@ -20,6 +44,9 @@ class InputMap:
         self.keymap[event.keysym] = 0.5
     
     def update(self):
+        if self.mouse_button == 2:
+            self.mouse_button = 1
+            
         # print(self.keymap)
         for key in self.keymap:
             # just pressed => pressed

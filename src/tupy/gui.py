@@ -336,6 +336,9 @@ class Window:
 
     def main_loop(self):
         self.root.after(self.UPDATE_DELAY, self.run_updates)
-        self.canvas.bind("<KeyPress>", self._input.on_key_press)
-        self.canvas.bind("<KeyRelease>", self._input.on_key_release)
+        self.canvas.bind('<KeyPress>', self._input.on_key_press)
+        self.canvas.bind('<KeyRelease>', self._input.on_key_release)
+        self.canvas.bind('<Button-1>', self._input.on_mouse_press)
+        self.canvas.bind('<ButtonRelease-1>', self._input.on_mouse_release)
+        self.canvas.bind('<Motion>', self._input.on_mouse_move)
         self.root.mainloop()
