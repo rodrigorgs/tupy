@@ -8,9 +8,10 @@
       "name": "Python: example",
       "type": "python",
       "request": "launch",
-      "program": "src/example.py",
+      "program": "../examples/all_examples.py",
       "console": "integratedTerminal",
-      "justMyCode": true
+      "justMyCode": true,
+      "cwd": "${workspaceFolder}/src"
     }
   ]
 }
