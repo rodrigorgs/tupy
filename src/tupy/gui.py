@@ -119,7 +119,7 @@ class Window:
         treeview.column('name', stretch=tk.YES, width=30)
         treeview.column('value', stretch=tk.YES, width=80)
         treeview.heading('name', text='Name')
-        treeview.heading('value', text='Value')
+        treeview.heading('value', text='Value (object)')
         frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         # ttk.Button(outer, text="New object", command=self.ask_create_object).pack(side=tk.BOTTOM, fill=tk.X, pady=3)
 
@@ -291,8 +291,8 @@ class Window:
 
         # ttk.Label(self.member_pane, text=f"{obj_name}'s attributes", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         obj = self._inspector.object_for_variable(obj_name)
-        ttk.Label(self.member_pane, text=f"Object {obj}", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-        ttk.Label(self.member_pane, text=f"Type: {obj.__class__.__name__}, id: {id(obj)}", font=(None, 12, '')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        ttk.Label(self.member_pane, text=f"Object information", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        ttk.Label(self.member_pane, text=f"Type: {obj.__class__.__name__}, id: {id(obj)}", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         ttk.Label(self.member_pane, text=f"Attributes", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
 
         cols = ('name', 'value', 'class')
