@@ -338,11 +338,15 @@ class Window:
         # TODO: discount update time
         self.root.after(self.UPDATE_DELAY, self.run_updates)
 
+    def canvas_click(self, event):
+        self._input.on_mouse_press(event)
+        self.canvas.focus_set()
+
     def main_loop(self):
         self.root.after(self.UPDATE_DELAY, self.run_updates)
         self.canvas.bind('<KeyPress>', self._input.on_key_press)
         self.canvas.bind('<KeyRelease>', self._input.on_key_release)
-        self.canvas.bind('<Button-1>', self._input.on_mouse_press)
+        self.canvas.bind('<Button-1>', self.canvas_click)
         self.canvas.bind('<ButtonRelease-1>', self._input.on_mouse_release)
         self.canvas.bind('<Motion>', self._input.on_mouse_move)
         self.root.mainloop()
