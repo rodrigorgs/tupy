@@ -113,13 +113,13 @@ class Window:
         outer = ttk.Frame(parent, height=200)
         outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        ttk.Label(outer, text="Objects", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, pady=3)
+        ttk.Label(outer, text='Global variables', font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, pady=3)
         treeview, frame = create_treeview_with_scrollbar(outer)
-        treeview.configure(columns=('name', 'class'), show='headings')
-        treeview.column('name', stretch=tk.YES, width=50)
-        treeview.column('class', stretch=tk.YES, width=50)
+        treeview.configure(columns=('name', 'value'), show='headings')
+        treeview.column('name', stretch=tk.YES, width=30)
+        treeview.column('value', stretch=tk.YES, width=80)
         treeview.heading('name', text='Name')
-        treeview.heading('class', text='Class')
+        treeview.heading('value', text='Value')
         frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         # ttk.Button(outer, text="New object", command=self.ask_create_object).pack(side=tk.BOTTOM, fill=tk.X, pady=3)
 
@@ -252,7 +252,8 @@ class Window:
             if var == '':
                 values = ('', '')
             else:
-                values = (var, type(self._inspector.object_for_variable(var)).__name__)
+                obj = self._inspector.object_for_variable(var)
+                values = (var, str(obj))
             self.object_pane.insert('', 'end', text=var, values=values)
             self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
 
@@ -288,7 +289,11 @@ class Window:
         if obj_name not in self._inspector.public_variables(type=self._common_supertype):
             return
 
-        ttk.Label(self.member_pane, text=f"{obj_name}'s attributes", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        # ttk.Label(self.member_pane, text=f"{obj_name}'s attributes", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        obj = self._inspector.object_for_variable(obj_name)
+        ttk.Label(self.member_pane, text=f"Object {obj}", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        ttk.Label(self.member_pane, text=f"Type: {obj.__class__.__name__}, id: {id(obj)}", font=(None, 12, '')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        ttk.Label(self.member_pane, text=f"Attributes", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
 
         cols = ('name', 'value', 'class')
         tree, tree_frame = create_treeview_with_scrollbar(self.member_pane)
@@ -298,17 +303,16 @@ class Window:
         tree.column('class', stretch=tk.YES, width=50)
         tree.heading('name', text='Name')
         tree.heading('value', text='Value')
-        tree.heading('class', text='Class')
+        tree.heading('class', text='Value\'s Class')
         tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
-        obj = self._inspector.object_for_variable(obj_name)
         
         for attr in self._inspector.get_public_attributes(obj):
             tuple = (attr, repr(getattr(obj, attr)), type(getattr(obj, attr)).__name__)
             tree.insert('', tk.END, values=tuple)
             tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
 
-        ttk.Label(self.member_pane, text=f"{obj_name}'s methods", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        ttk.Label(self.member_pane, text=f"Methods", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         for method in self._inspector.get_public_methods(obj):
             if method in ('update', ):
                 continue

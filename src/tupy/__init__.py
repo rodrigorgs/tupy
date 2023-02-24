@@ -28,6 +28,9 @@ class TupyObject:
     @property
     def _top_left(self):
         return self.x, self.y
+    
+    def __str__(self) -> str:
+        return f'<{self.__class__.__name__}:{id(self)}>'
 
 class Oval(TupyObject):
     def __init__(self, x, y, width, height, outline='black', fill=''):
