@@ -349,7 +349,7 @@ class Window:
         if self._selected_object is not None:
             o = self._selected_object
             x, y = o._top_left
-            self.canvas.coords(self._selection_box, x, y, x + o.width, y + o.height)
+            self.canvas.coords(self._selection_box, x, y, x + o._width, y + o._height)
         # TODO: discount update time
         self.root.after(self.UPDATE_DELAY, self.run_updates)
 
