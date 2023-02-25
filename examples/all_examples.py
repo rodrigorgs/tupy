@@ -4,6 +4,7 @@ import os
 examples = '''
 drone-stars.py
 pt-br/01-captura-estrelas.py
+pt-br/01-corrida.py
 '''.strip().split('\n')
 
 root = tk.Tk()
