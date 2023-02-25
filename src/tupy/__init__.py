@@ -11,10 +11,12 @@ from tupy.inspector import Inspector
 global_canvas = None
 inspector: Optional[Inspector] = None
 input = InputMap()
+window = Window(inspector=inspector, input=input, common_supertype='tupy.TupyObject')
 
 class TupyObject:
     def destroy(self):
         inspector.destroy_object(self)
+        window.update_object_pane()
 
     def collides_with(self, other):
         if not isinstance(other, TupyObject):
@@ -247,7 +249,7 @@ class Image(TupyObject):
         self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path).rotate(value))
         global_canvas.itemconfig(self._sprite, image=self._tkobject)
 
-window = Window(inspector=inspector, input=input, common_supertype=TupyObject)
+
 window.create()
 global_canvas = window.canvas
 
