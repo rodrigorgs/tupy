@@ -268,7 +268,11 @@ class Window:
             self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
         
         if self._selected_variable is not None:
-            self.object_pane.selection_set(self._selected_variable)
+            # if object_pane has key, select it
+            if self._selected_variable in self.object_pane.get_children():
+                self.object_pane.selection_set(self._selected_variable)
+            else:
+                self.object_pane.selection_set(' ')
 
     def on_click_member(self, tree, obj_name):
         index = tree.selection()[0]
