@@ -51,13 +51,19 @@ class Oval(TupyObject):
     @property
     def _width(self):
         return global_canvas.coords(self._tkobject)[2] - self.x
-    @_width.setter
+    @property
+    def width(self):
+        return self._width
+    @width.setter
     def width(self, value):
         global_canvas.coords(self._tkobject, self.x, self.y, self.x+value, self.y+self._height)
     @property
     def _height(self):
         return global_canvas.coords(self._tkobject)[3] - self.y
-    @_height.setter
+    @property
+    def height(self):
+        return self._height
+    @height.setter
     def height(self, value):
         global_canvas.coords(self._tkobject, self.x, self.y, self.x+self._width, self.y+value)
     @property
@@ -142,13 +148,19 @@ class Rectangle(TupyObject):
     @property
     def _width(self):
         return global_canvas.coords(self._tkobject)[2] - self.x
-    @_width.setter
+    @property
+    def width(self):
+        return self._width
+    @width.setter
     def width(self, value):
         global_canvas.coords(self._tkobject, self.x, self.y, self.x + value, self.y + self._height)
     @property
     def _height(self):
         return global_canvas.coords(self._tkobject)[3] - self.y
-    @_height.setter
+    @property
+    def height(self):
+        return self._height
+    @height.setter
     def height(self, value):
         global_canvas.coords(self._tkobject, self.x, self.y, self.x + self._width, self.y + value)
     @property
