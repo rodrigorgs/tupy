@@ -263,7 +263,6 @@ class Window:
             else:
                 obj = self._inspector.object_for_variable(var)
                 values = (var, str(obj))
-            print(var, values)
             self.object_pane.insert('', 'end', iid=var, text=var, values=values)
             self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
         
