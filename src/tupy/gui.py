@@ -36,6 +36,7 @@ class Window:
         self._command_history = CommandHistory()
         self._selection_box = None        
         self._selected_object = None
+        self._selected_variable = None
         self.is_paused = False
 
     def create(self):
@@ -246,6 +247,7 @@ class Window:
         index = tree.selection()[0]
         item = tree.item(index)
         obj_name = item['values'][0]
+        self._selected_variable = obj_name
         if obj_name == '':
             self.select_object(None)
         else:
@@ -255,14 +257,18 @@ class Window:
     def update_object_pane(self):
         self.object_pane.delete(*self.object_pane.get_children())
         
-        for var in [''] + self._inspector.public_variables(type=self._common_supertype):
-            if var == '':
+        for var in [' '] + self._inspector.public_variables(type=self._common_supertype):
+            if var == ' ':
                 values = ('', '')
             else:
                 obj = self._inspector.object_for_variable(var)
                 values = (var, str(obj))
-            self.object_pane.insert('', 'end', text=var, values=values)
+            print(var, values)
+            self.object_pane.insert('', 'end', iid=var, text=var, values=values)
             self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
+        
+        if self._selected_variable is not None:
+            self.object_pane.selection_set(self._selected_variable)
 
     def on_click_member(self, tree, obj_name):
         index = tree.selection()[0]
