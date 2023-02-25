@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-24 21:47-0300\n"
+"POT-Creation-Date: 2023-02-25 06:54-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,89 +17,93 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui.py:94
+#: gui.py:96
 msgid "New object..."
 msgstr ""
 
-#: gui.py:122
+#: gui.py:124
 msgid "Global variables"
 msgstr ""
 
-#: gui.py:127 gui.py:310
+#: gui.py:129 gui.py:324 gui.py:341
 msgid "Name"
 msgstr ""
 
-#: gui.py:128
+#: gui.py:130
 msgid "Value (object)"
 msgstr ""
 
-#: gui.py:136
+#: gui.py:138
 msgid "Variable name"
 msgstr ""
 
-#: gui.py:136
+#: gui.py:138
 msgid ""
 "Enter a name for the new object\n"
 "(must be a valid Python identifier)\n"
 "or leave empty for a random name:"
 msgstr ""
 
-#: gui.py:143
+#: gui.py:145
 msgid "Class name"
 msgstr ""
 
-#: gui.py:143
+#: gui.py:145
 msgid "Enter the name of the class to instantiate:"
 msgstr ""
 
-#: gui.py:155
+#: gui.py:157
 msgid "Constructor parameters"
 msgstr ""
 
-#: gui.py:155
+#: gui.py:157
 #, python-brace-format
 msgid ""
 "Enter the parameters for the constructor of {classname}:\n"
 "{info}"
 msgstr ""
 
-#: gui.py:271
+#: gui.py:281
 msgid "Set value"
 msgstr ""
 
-#: gui.py:271
+#: gui.py:281
 #, python-brace-format
 msgid "New value for {attr_name}:"
 msgstr ""
 
-#: gui.py:286
+#: gui.py:299
 msgid "Provide parameters"
 msgstr ""
 
-#: gui.py:286
+#: gui.py:299
 msgid "Comma-separated parameter list:"
 msgstr ""
 
-#: gui.py:300
+#: gui.py:314
 msgid "Object information"
 msgstr ""
 
-#: gui.py:301
+#: gui.py:315
 msgid "Type"
 msgstr ""
 
-#: gui.py:302
+#: gui.py:316
 msgid "Attributes"
 msgstr ""
 
-#: gui.py:311
+#: gui.py:325
 msgid "Value"
 msgstr ""
 
-#: gui.py:312
+#: gui.py:326
 msgid "Value's Class"
 msgstr ""
 
-#: gui.py:321
+#: gui.py:335
 msgid "Methods"
+msgstr ""
+
+#: gui.py:342
+msgid "Parameters"
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-24 21:47-0300\n"
+"POT-Creation-Date: 2023-02-25 06:52-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,27 +17,27 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui.py:94
+#: gui.py:96
 msgid "New object..."
 msgstr "Novo objeto..."
 
-#: gui.py:122
+#: gui.py:124
 msgid "Global variables"
 msgstr "Variáveis globais"
 
-#: gui.py:127 gui.py:310
+#: gui.py:129 gui.py:324 gui.py:341
 msgid "Name"
 msgstr "Nome"
 
-#: gui.py:128
+#: gui.py:130
 msgid "Value (object)"
 msgstr "Valor (objeto)"
 
-#: gui.py:136
+#: gui.py:138
 msgid "Variable name"
 msgstr "Nome da variável"
 
-#: gui.py:136
+#: gui.py:138
 msgid ""
 "Enter a name for the new object\n"
 "(must be a valid Python identifier)\n"
@@ -47,19 +47,19 @@ msgstr ""
 "(deve ser um identificador Python válido)\n"
 "ou deixe vazio para um nome aleatório"
 
-#: gui.py:143
+#: gui.py:145
 msgid "Class name"
 msgstr "Nome da classe"
 
-#: gui.py:143
+#: gui.py:145
 msgid "Enter the name of the class to instantiate:"
 msgstr "Digite o nome da classe para instanciar:"
 
-#: gui.py:155
+#: gui.py:157
 msgid "Constructor parameters"
 msgstr "Parâmetros do construtor"
 
-#: gui.py:155
+#: gui.py:157
 #, python-brace-format
 msgid ""
 "Enter the parameters for the constructor of {classname}:\n"
@@ -68,43 +68,48 @@ msgstr ""
 "Digite os parâmetros para o construtor de {classname}:\n"
 "{info}"
 
-#: gui.py:271
+#: gui.py:281
 msgid "Set value"
 msgstr "Definir valor"
 
-#: gui.py:271
+#: gui.py:281
 #, python-brace-format
 msgid "New value for {attr_name}:"
 msgstr "Novo valor para {attr_name}:"
 
-#: gui.py:286
+#: gui.py:299
 msgid "Provide parameters"
 msgstr "Forneça parâmetros"
 
-#: gui.py:286
+#: gui.py:299
 msgid "Comma-separated parameter list:"
 msgstr "Lista de parâmetros separados por vírgulas:"
 
-#: gui.py:300
+#: gui.py:314
 msgid "Object information"
 msgstr "Informações do objeto"
 
-#: gui.py:301
+#: gui.py:315
 msgid "Type"
 msgstr "Tipo"
 
-#: gui.py:302
+#: gui.py:316
 msgid "Attributes"
 msgstr "Atributos"
 
-#: gui.py:311
+#: gui.py:325
 msgid "Value"
 msgstr "Valor"
 
-#: gui.py:312
+#: gui.py:326
 msgid "Value's Class"
 msgstr "Classe do valor"
 
-#: gui.py:321
+#: gui.py:335
 msgid "Methods"
 msgstr "Métodos"
+
+#: gui.py:342
+#, fuzzy
+msgid "Parameters"
+msgstr "Parâmetros"

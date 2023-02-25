@@ -284,21 +284,25 @@ class Window:
             setattr(self._selected_object, attr_name, new_value)
             self.update_member_pane(obj_name)
 
-    def update_member_pane(self, obj_name):
-        def make_callback(obj_name, member_name):
-            def callback():
-                obj = self._inspector.object_for_variable(obj_name)
-                method = self._inspector.get_method(obj, member_name)
-                info = self._inspector.method_info(method)
-                if self._inspector.method_parameters(method) == []:
-                    params = ''
-                else:
-                    params = simpledialog.askstring(_("Provide parameters"), _("Comma-separated parameter list:") + "\n" + str(info))
-                if params is not None:
-                    self.run_command(f'{obj_name}.{member_name}({params})', use_eval = True)
-                    self.update_member_pane(obj_name)
-            return callback
+    def on_click_method(self, tree, obj_name):
+        index = tree.selection()[0]
+        item = tree.item(index)
+        method_name = item['values'][0]
+        value = item['values'][1]
 
+        obj = self._inspector.object_for_variable(obj_name)
+        method = self._inspector.get_method(obj, method_name)
+        info = self._inspector.method_info(method)
+        if self._inspector.method_parameters(method) == []:
+            params = ''
+        else:
+            params = simpledialog.askstring(_("Provide parameters"), _("Comma-separated parameter list:") + "\n" + str(info))
+        if params is not None:
+            self.run_command(f'{obj_name}.{method_name}({params})', use_eval = True)
+            self.update_member_pane(obj_name)
+
+
+    def update_member_pane(self, obj_name):
         for child in self.member_pane.winfo_children():
             child.destroy()
 
@@ -329,13 +333,22 @@ class Window:
             tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
 
         ttk.Label(self.member_pane, text=_("Methods"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        cols = ('name', 'parameters')
+        tree, tree_frame = create_treeview_with_scrollbar(self.member_pane)
+        tree.configure(columns=cols, show='headings', height=6)
+        tree.column('name', stretch=tk.YES, width=50)
+        tree.column('parameters', stretch=tk.YES, width=50)
+        tree.heading('name', text=_('Name'))
+        tree.heading('parameters', text=_('Parameters'))
+        tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+
         for method in self._inspector.get_public_methods(obj):
             if method in ('update', ):
                 continue
             params = self._inspector.method_parameters(self._inspector.get_method(obj, method))
-            button = ttk.Button(self.member_pane, text=f'{method}({", ".join(params)})',
-                                command=make_callback(obj_name, method))
-            button.pack(anchor=tk.W, padx=5)
+            tuple = (method, ', '.join(params))
+            tree.insert('', tk.END, values=tuple)
+            tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_method(tree, obj_name))
 
     def update_objects(self):
         updated_object_ids = set()
