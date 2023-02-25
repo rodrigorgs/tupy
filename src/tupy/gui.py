@@ -7,6 +7,12 @@ import tkinter.ttk as ttk
 from contextlib import redirect_stdout, redirect_stderr
 import io
 from tupy.history import CommandHistory
+import gettext
+
+_translation = gettext.translation('tupy', localedir='tupy/locale', 
+        languages=['en', 'pt_BR'])
+_translation.install()
+_ = _translation.gettext
 
 def create_treeview_with_scrollbar(parent):
     frame = ttk.Frame(parent)
@@ -85,7 +91,7 @@ class Window:
         button_run = ttk.Button(toolbar, text="▶", command=self.play)
         button_pause = ttk.Button(toolbar, text="❙❙", command=self.pause)
         button_step = ttk.Button(toolbar, text="▶❙", command=self.step)
-        button_add = ttk.Button(toolbar, text="➕ New object...", command=self.ask_create_object)
+        button_add = ttk.Button(toolbar, text="➕ " + _("New object..."), command=self.ask_create_object)
 
         button_run.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
         button_pause.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
@@ -113,13 +119,13 @@ class Window:
         outer = ttk.Frame(parent, height=200)
         outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        ttk.Label(outer, text='Global variables', font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, pady=3)
+        ttk.Label(outer, text=_('Global variables'), font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, pady=3)
         treeview, frame = create_treeview_with_scrollbar(outer)
         treeview.configure(columns=('name', 'value'), show='headings')
         treeview.column('name', stretch=tk.YES, width=30)
         treeview.column('value', stretch=tk.YES, width=80)
-        treeview.heading('name', text='Name')
-        treeview.heading('value', text='Value (object)')
+        treeview.heading('name', text=_('Name'))
+        treeview.heading('value', text=_('Value (object)'))
         frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         # ttk.Button(outer, text="New object", command=self.ask_create_object).pack(side=tk.BOTTOM, fill=tk.X, pady=3)
 
@@ -127,14 +133,14 @@ class Window:
         return outer
 
     def ask_create_object(self):        
-        variable = simpledialog.askstring("Variable name", f"Enter a name for the new object\n(must be a valid Python identifier)\nor leave empty for a random name:")
+        variable = simpledialog.askstring(_("Variable name"), _("Enter a name for the new object\n(must be a valid Python identifier)\nor leave empty for a random name:"))
         if variable is None:
             return
         if variable == '':
             suffix = ''.join(random.choices(string.ascii_lowercase, k=4))
             variable = f'obj_{suffix}'
 
-        classname = simpledialog.askstring("Class name", f"Enter the name of the class to instantiate:")
+        classname = simpledialog.askstring(_("Class name"), _("Enter the name of the class to instantiate:"))
         if classname is None:
             return
 
@@ -146,7 +152,7 @@ class Window:
         args = ''
         
         if len(params) > 0:
-            args = simpledialog.askstring("Constructor parameters", f"Enter the parameters for the constructor of {classname}:\n{info}")
+            args = simpledialog.askstring(_("Constructor parameters"), _("Enter the parameters for the constructor of {classname}:\n{info}").format(classname=classname, info=info))
 
         self._inspector.create_object(variable, classname, args)
         self.update_object_pane()
@@ -262,7 +268,7 @@ class Window:
         item = tree.item(index)
         attr_name = item['values'][0]
         value = item['values'][1]
-        new_value_str = simpledialog.askstring('Set value', f'New value for {attr_name}:', initialvalue=value)
+        new_value_str = simpledialog.askstring(_('Set value'), _('New value for {attr_name}:').format(attr_name=attr_name), initialvalue=value)
         if new_value_str is not None:
             new_value = eval(new_value_str)
             setattr(self._selected_object, attr_name, new_value)
@@ -277,7 +283,7 @@ class Window:
                 if self._inspector.method_parameters(method) == []:
                     params = ''
                 else:
-                    params = simpledialog.askstring("Provide parameters", f"Comma-separated parameter list:\n{info}")
+                    params = simpledialog.askstring(_("Provide parameters"), _("Comma-separated parameter list:") + "\n" + str(info))
                 if params is not None:
                     self.run_command(f'{obj_name}.{member_name}({params})', use_eval = True)
                     self.update_member_pane(obj_name)
@@ -291,9 +297,9 @@ class Window:
 
         # ttk.Label(self.member_pane, text=f"{obj_name}'s attributes", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         obj = self._inspector.object_for_variable(obj_name)
-        ttk.Label(self.member_pane, text=f"Object information", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-        ttk.Label(self.member_pane, text=f"Type: {obj.__class__.__name__}, id: {id(obj)}", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-        ttk.Label(self.member_pane, text=f"Attributes", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        ttk.Label(self.member_pane, text=_("Object information"), font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        ttk.Label(self.member_pane, text=_("Type") + f": {obj.__class__.__name__}, id: {id(obj)}", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        ttk.Label(self.member_pane, text=_("Attributes"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
 
         cols = ('name', 'value', 'class')
         tree, tree_frame = create_treeview_with_scrollbar(self.member_pane)
@@ -301,9 +307,9 @@ class Window:
         tree.column('name', stretch=tk.YES, width=50)
         tree.column('value', stretch=tk.YES, width=50)
         tree.column('class', stretch=tk.YES, width=50)
-        tree.heading('name', text='Name')
-        tree.heading('value', text='Value')
-        tree.heading('class', text='Value\'s Class')
+        tree.heading('name', text=_('Name'))
+        tree.heading('value', text=_('Value'))
+        tree.heading('class', text=_('Value\'s Class'))
         tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
         
@@ -312,7 +318,7 @@ class Window:
             tree.insert('', tk.END, values=tuple)
             tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
 
-        ttk.Label(self.member_pane, text=f"Methods", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        ttk.Label(self.member_pane, text=_("Methods"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         for method in self._inspector.get_public_methods(obj):
             if method in ('update', ):
                 continue
