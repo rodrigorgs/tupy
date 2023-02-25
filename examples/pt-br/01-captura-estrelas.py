@@ -26,20 +26,30 @@ class Drone(Image):
             self._atualiza()
 
     def _atualiza(self):
-        if drone.collides_with(item):
-            item.acende()
-        else:
-            item.apaga()
-
-class Star(Image):
-    pass
+        itens = [v for k, v in globals().items() if isinstance(v, Estrela)]
+        for item in itens:
+            if self.collides_with(item):
+                item.acende()
 
 class Estrela(Image):
-    def __init__(self):
+    def __init__(self, x, y):
         self.path = 'star2.png'
-        self.x = 150
-        self.y = 250
+        self.x = x
+        self.y = y
         self._acesa = False
+
+    def update(self):
+        self.angle = (self.angle + 5) % 360
+
+    @property
+    def acesa(self):
+        return self._acesa
+    @acesa.setter
+    def acesa(self, valor):
+        if valor:
+            self.acende()
+        else:
+            self.apaga()
 
     def apaga(self):
         self.path = 'star2.png'
@@ -49,6 +59,12 @@ class Estrela(Image):
         self.path = 'star.png'
         self._acesa = True
 
+    def alterna(self):
+        if self._acesa:
+            self.apaga()
+        else:
+            self.acende()
+
     def estado(self):
         if self._acesa:
             return 'acesa'
@@ -57,6 +73,7 @@ class Estrela(Image):
 
 
 drone = Drone()
-item = Estrela()
+item1 = Estrela(150, 250)
+item2 = Estrela(250, 150)
 
 run(globals())
