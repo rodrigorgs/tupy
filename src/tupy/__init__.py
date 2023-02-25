@@ -224,7 +224,6 @@ class Image(TupyObject):
             path = os.path.join(pkg_resources.path('tupy', 'assets'), path)
         if not os.path.exists(path):
             path = os.path.join(pkg_resources.path('tupy', 'assets'), 'missing.png')
-        print(f'chosen path: {path}')
         return path
 
     @property
