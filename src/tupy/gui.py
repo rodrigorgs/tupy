@@ -322,9 +322,11 @@ class Window:
             button.pack(anchor=tk.W, padx=5)
 
     def update_objects(self):
+        updated_object_ids = set()
         for obj in self._inspector.public_objects(type=self._common_supertype):
-            if hasattr(obj, 'update'):
+            if hasattr(obj, 'update') and id(obj) not in updated_object_ids:
                 obj.update()
+                updated_object_ids.add(id(obj))
 
     def run_updates(self):
         if not self.is_paused:
