@@ -40,6 +40,7 @@ class Window:
 
     def create(self):
         self.root = tk.Tk()
+        self.root.title('Tupy')
         self.root.bind("<Escape>", lambda _event: self.root.destroy())
 
         self.toolbar = self.create_toolbar(self.root)
