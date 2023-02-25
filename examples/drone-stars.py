@@ -10,7 +10,13 @@ class Drone(Image):
             self.y -= 10
         if input.is_key_down('Down'):
             self.y += 10
-        
+
+        if input.is_key_just_down('space'):
+            global star1
+            star1 = Star()
+            star1.x = self.x + 100
+            star1.y = self.y + 100
+
         if input.is_mouse_just_down():
             self.x = input.mouse_x
             self.y = input.mouse_y

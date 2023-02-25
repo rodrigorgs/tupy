@@ -14,6 +14,12 @@ input = InputMap()
 window = Window(inspector=inspector, input=input, common_supertype='tupy.TupyObject')
 
 class TupyObject:
+    def __new__(cls, *args, **kwargs):
+        obj = super().__new__(cls)
+        window.root.after(1, window.update_object_pane)
+        # window.update_object_pane()
+        return obj
+
     def destroy(self):
         inspector.destroy_object(self)
         window.update_object_pane()
