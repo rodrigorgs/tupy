@@ -176,10 +176,6 @@ class Image(TupyObject):
     def _initialize(self, x, y):
         # if self._image_path is None:
         self._image_path = self._find_image_path(self.__class__.__name__.lower() + '.png')
-        if not os.path.exists(self._image_path):
-            self._image_path = os.path.join(pkg_resources.path('tupy', 'assets'), self._image_path)
-        if not os.path.exists(self._image_path):
-            self._image_path = os.path.join(pkg_resources.path('tupy', 'assets'), 'missing.png')
         self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path))
 
         self._sprite = global_canvas.create_image(x, y, image=self._tkobject)
@@ -228,8 +224,8 @@ class Image(TupyObject):
             path = os.path.join(pkg_resources.path('tupy', 'assets'), path)
         if not os.path.exists(path):
             path = os.path.join(pkg_resources.path('tupy', 'assets'), 'missing.png')
+        print(f'chosen path: {path}')
         return path
-
 
     @property
     def angle(self):
