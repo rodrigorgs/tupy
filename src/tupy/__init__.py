@@ -77,7 +77,7 @@ class Oval(TupyObject):
         global_canvas.delete(self._tkobject)
 
 class Label(TupyObject):
-    def __init__(self, text, x, y, font='Arial 10', color='black', anchor='nw'):
+    def __init__(self, text, x, y, font='Arial 20', color='black', anchor='nw'):
         self._tkobject = global_canvas.create_text(x, y, text=text, font=font, fill=color, anchor=anchor)
     
     @property
