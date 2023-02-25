@@ -150,7 +150,7 @@ class Window:
         klass = self._inspector.object_for_variable(classname)
         method = self._inspector.get_method(klass, '__init__')
         params = self._inspector.method_parameters(method)
-        info = self._inspector.method_info(method)
+        info = self._inspector.method_info(method).replace('(self, ', '(')
         args = ''
         
         if len(params) > 0:
