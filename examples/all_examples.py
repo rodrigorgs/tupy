@@ -1,8 +1,10 @@
 import tkinter as tk
 import os
 
-examples = [f'pt-br/{f}' for f in os.listdir('../examples/pt-br') if f.endswith('.py')]
-examples.sort()
+examples = [
+    'drone-stars.py',
+]
+examples += sorted([f'pt-br/{f}' for f in os.listdir('../examples/pt-br') if f.endswith('.py')])
 
 root = tk.Tk()
 
