@@ -8,7 +8,7 @@ class Star(Image):
 
 class Tiro(Image):
     def __init__(self):
-        self.path = 'ball.png'
+        self.file = 'ball.png'
 
     def update(self):
         self.y -= 15

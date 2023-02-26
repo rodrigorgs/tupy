@@ -33,7 +33,7 @@ class Drone(Image):
 
 class Estrela(Image):
     def __init__(self, x, y):
-        self.path = 'star2.png'
+        self.file = 'star2.png'
         self.x = x
         self.y = y
         self._acesa = False
@@ -52,11 +52,11 @@ class Estrela(Image):
             self.apaga()
 
     def apaga(self):
-        self.path = 'star2.png'
+        self.file = 'star2.png'
         self._acesa = False
     
     def acende(self):
-        self.path = 'star.png'
+        self.file = 'star.png'
         self._acesa = True
 
     def alterna(self):

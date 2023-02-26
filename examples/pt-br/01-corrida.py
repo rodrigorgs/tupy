@@ -2,17 +2,17 @@ from tupy import *
 
 class Star(Image):
     def __init__(self):
-        self.path = 'star.png'
+        self.file = 'star.png'
         self.x = 0
         self._ligado = True
         self.velocidade = 5
 
     def desliga(self):
-        self.path = 'star2.png'
+        self.file = 'star2.png'
         self._ligado = False
     
     def liga(self):
-        self.path = 'star.png'
+        self.file = 'star.png'
         self._ligado = True
 
     def estado(self):

@@ -230,10 +230,10 @@ class Image(TupyObject):
         return self._tkobject.height()
 
     @property
-    def path(self):
+    def file(self):
         return self._image_path
-    @path.setter
-    def path(self, value):
+    @file.setter
+    def file(self, value):
         self._image_path = self._find_image_path(value)
         self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path))
         global_canvas.itemconfig(self._sprite, image=self._tkobject)
