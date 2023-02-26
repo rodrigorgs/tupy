@@ -187,7 +187,6 @@ class Rectangle(TupyObject):
 class Image(TupyObject):
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls)
-        # self._image_path = path
         x = random.randint(0, Window.CANVAS_WIDTH)
         y = random.randint(0, Window.CANVAS_HEIGHT)
         self._initialize(x, y)
@@ -195,7 +194,8 @@ class Image(TupyObject):
 
     def _initialize(self, x, y):
         # if self._image_path is None:
-        self._image_path = self._find_image_path(self.__class__.__name__.lower() + '.png')
+        self._file = self.__class__.__name__.lower() + '.png'
+        self._image_path = self._find_image_path(self._file)
         self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path))
 
         self._sprite = global_canvas.create_image(x, y, image=self._tkobject)
@@ -231,9 +231,11 @@ class Image(TupyObject):
 
     @property
     def file(self):
-        return self._image_path
+        return self._file
+        
     @file.setter
     def file(self, value):
+        self._file = value
         self._image_path = self._find_image_path(value)
         self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path))
         global_canvas.itemconfig(self._sprite, image=self._tkobject)
