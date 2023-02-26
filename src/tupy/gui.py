@@ -334,21 +334,21 @@ class Window:
 
         ttk.Label(self.member_pane, text=_("Methods"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         cols = ('name', 'parameters')
-        tree, tree_frame = create_treeview_with_scrollbar(self.member_pane)
-        tree.configure(columns=cols, show='headings', height=6)
-        tree.column('name', stretch=tk.YES, width=50)
-        tree.column('parameters', stretch=tk.YES, width=50)
-        tree.heading('name', text=_('Name'))
-        tree.heading('parameters', text=_('Parameters'))
-        tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+        tree_methods, tree_frame_methods = create_treeview_with_scrollbar(self.member_pane)
+        tree_methods.configure(columns=cols, show='headings', height=6)
+        tree_methods.column('name', stretch=tk.YES, width=50)
+        tree_methods.column('parameters', stretch=tk.YES, width=50)
+        tree_methods.heading('name', text=_('Name'))
+        tree_methods.heading('parameters', text=_('Parameters'))
+        tree_frame_methods.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
         for method in self._inspector.get_public_methods(obj):
             if method in ('update', ):
                 continue
             params = self._inspector.method_parameters(self._inspector.get_method(obj, method))
             tuple = (method, ', '.join(params))
-            tree.insert('', tk.END, values=tuple)
-            tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_method(tree, obj_name))
+            tree_methods.insert('', tk.END, values=tuple)
+            tree_methods.bind("<<TreeviewSelect>>", lambda e: self.on_click_method(tree_methods, obj_name))
 
     def update_objects(self):
         updated_object_ids = set()
