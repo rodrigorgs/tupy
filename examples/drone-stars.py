@@ -2,24 +2,24 @@ from tupy import *
 
 class Drone(Image):
     def update(self):
-        if Input.is_key_down('Right'):
+        if input.is_key_down('Right'):
             self.x += 10
-        if Input.is_key_down('Left'):
+        if input.is_key_down('Left'):
             self.x -= 10
-        if Input.is_key_down('Up'):
+        if input.is_key_down('Up'):
             self.y -= 10
-        if Input.is_key_down('Down'):
+        if input.is_key_down('Down'):
             self.y += 10
 
-        if Input.is_key_just_down('space'):
+        if input.is_key_just_down('space'):
             global star1
             star1 = Star()
             star1.x = self.x + 100
             star1.y = self.y + 100
 
-        if Input.is_mouse_just_down():
-            self.x = Input.mouse_x
-            self.y = Input.mouse_y
+        if input.is_mouse_just_down():
+            self.x = input.mouse_x
+            self.y = input.mouse_y
 
 class Star(Image):
     def update(self):
@@ -38,7 +38,7 @@ class Score(Label):
         self.text = f'Score: {self.score}'
 
     def update(self):
-        coords.text = f'{Input.mouse_x}, {Input.mouse_y}'
+        coords.text = f'{input.mouse_x}, {input.mouse_y}'
 
 if __name__ == '__main__':
     drone = Drone()

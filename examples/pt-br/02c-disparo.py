@@ -20,7 +20,7 @@ class Smiley(Image):
         self.tiro = None
 
     def update(self):
-        if Input.is_key_just_down('space'):
+        if input.is_key_just_down('space'):
             self.dispara()
         if self.tiro is not None:
             self.tiro.update()

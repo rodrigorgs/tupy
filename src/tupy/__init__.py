@@ -5,13 +5,13 @@ import os
 import random
 
 from tupy.gui import Window
-from tupy.input_map import InputMap
+from tupy.input import InputMap
 from tupy.inspector import Inspector
 
 global_canvas = None
 inspector: Optional[Inspector] = None
-Input = InputMap()
-window = Window(inspector=inspector, input=Input, common_supertype='tupy.TupyObject')
+input = InputMap()
+window = Window(inspector=inspector, input=input, common_supertype='tupy.TupyObject')
 
 class TupyObject:
     def __new__(cls, *args, **kwargs):
@@ -200,7 +200,7 @@ class Image(TupyObject):
 
         self._sprite = global_canvas.create_image(x, y, image=self._tkobject)
         self._angle = 0
-        self._input = Input
+        self._input = input
 
     @property
     def _top_left(self):
