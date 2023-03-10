@@ -1,0 +1,8 @@
+TODO
+
+- Update the selected object's attribute values every frame
+- Use a tree for the object inspector in order to show an object's children of the Object or list[Object] type
+- Allow selecting an object by clicking on it on canvas (this behavior should be configurable via a toggle on the interface)
+- When calling a method or setting an attribute using the UI, potential exceptions should be shown on history
+- Release mode: run(globals(), release=true) should open the application showing only the canvas
+- Create class ImageData to encapsulate a PIL Image
