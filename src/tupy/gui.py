@@ -1,4 +1,5 @@
 import random
+import traceback
 import string
 import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
@@ -130,6 +131,7 @@ class Window:
         side_pane.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         outer_object_pane = self.create_object_pane(side_pane)
+        self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
         self.member_pane = self.create_member_pane(side_pane)
 
         side_pane.add(outer_object_pane)
@@ -255,14 +257,16 @@ class Window:
     def submit_console(self, _event):
         self.run_command(self.console.get(), on_end=lambda: self.console.delete(0, tk.END))
 
-    def select_object(self, obj, obj_name=None):
+    def select_object(self, obj, obj_name):
         self._selected_object = obj
         self._selected_variable = obj_name
+        print('select object', obj, obj_name)
+        traceback.print_stack(limit=6)
         if obj is None or not self._inspector.object_has_type(obj, self._common_supertype):
             self._selected_object = None
             self._selected_variable = None
             self.canvas.itemconfig(self._selection_box, outline='')
-            self.update_member_pane(None, '')
+            self.update_member_pane(None, None)
         else:
             self.canvas.itemconfig(self._selection_box, outline='darkgray', dash=(5, 5))
             self.canvas.tag_raise(self._selection_box)
@@ -275,7 +279,9 @@ class Window:
         obj_name = item['values'][0]
         self._selected_variable = obj_name
         if obj_name == '':
-            self.select_object(None)
+            pass
+        elif obj_name is None:
+            self.select_object(None, None)
         else:
             self.select_object(self._inspector.object_for_variable(obj_name), obj_name)
 
@@ -289,13 +295,13 @@ class Window:
                 obj = self._inspector.object_for_variable(var)
                 values = (var, str(obj))
             self.object_pane.insert('', 'end', iid=var, text=var, values=values)
-            self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
         
         if self._selected_variable is not None:
             # if object_pane has key, select it
             if self._selected_variable in self.object_pane.get_children():
                 self.object_pane.selection_set(self._selected_variable)
             else:
+                print('selection_set \'\'')
                 self.object_pane.selection_set(' ')
 
     def on_click_member(self, tree, obj_name):
@@ -326,20 +332,23 @@ class Window:
         else:
             params = simpledialog.askstring(_("Provide parameters"), _("Comma-separated parameter list:") + "\n" + str(info))
         if params is not None:
-            if obj_name is not None and obj_name != '':
-                self.run_command(f'{obj_name}.{method_name}({params})', use_eval = True)
-            else:
-                # params_tuple = self._inspector.eval(f'({params},)')
-                if params.strip() == '':
-                    ret = method()
-                else:
-                    params_tuple = (self._inspector.eval(p) for p in params.split(','))
-                    ret = method(*params_tuple)
-                if ret is not None:
-                    self.write_on_history(f'=> {ret}\n', tag='output')
+            # if obj_name is not None and obj_name != '':
+            print('run_command')
+            self.run_command(f'{obj_name}.{method_name}({params})', use_eval = True)
+            # else:
+            #     # params_tuple = self._inspector.eval(f'({params},)')
+            #     if params.strip() == '':
+            #         ret = method()
+            #     else:
+            #         params_tuple = (self._inspector.eval(p) for p in params.split(','))
+            #         ret = method(*params_tuple)
+            #     if ret is not None:
+            #         self.write_on_history(f'=> {ret}\n', tag='output')
             self.update_member_pane(obj, obj_name=obj_name)
 
     def update_member_pane(self, obj, obj_name):
+        print('update_member_pane', obj, obj_name)
+        traceback.print_stack(limit=6)
         for child in self.member_pane.winfo_children():
             child.destroy()
 
@@ -413,7 +422,10 @@ class Window:
             obj = self._registry.get_object(id)
             if (obj is not None) and (not obj._contains_point(event.x, event.y)):
                 obj = None
-            self.select_object(obj, None)
+            if obj is None:
+                self.select_object(None, None)
+            else:
+                self.select_object(obj, f"objects[{obj._tkid}]")
 
     def canvas_click(self, event):
         self._input.on_mouse_press(event)

@@ -15,10 +15,10 @@ _translation = gettext.translation('tupy', localedir='tupy/locale',
 _translation.install()
 
 global_canvas = None
-registry = Registry()
+objects = Registry()
 inspector: Optional[Inspector] = None
 input = InputMap()
-window = Window(inspector=inspector, input=input, common_supertype='tupy.TupyObject', registry=registry)
+window = Window(inspector=inspector, input=input, common_supertype='tupy.TupyObject', registry=objects)
 
 class TupyObject:
     def __new__(cls, *args, **kwargs):
@@ -29,7 +29,7 @@ class TupyObject:
 
     def destroy(self):
         inspector.destroy_object(self)
-        registry.remove_object(self)
+        objects.remove_object(self)
         window.update_object_pane()
 
     def _contains_point(self, px, py):
@@ -56,7 +56,7 @@ class TupyObject:
 class Oval(TupyObject):
     def __init__(self, x, y, width, height, outline='black', fill=''):
         self._tkid = global_canvas.create_oval(x, y, x+width, y+height, fill=fill, outline=outline)
-        registry.add_object(self)
+        objects.add_object(self)
     
     @property
     def x(self):
@@ -107,7 +107,7 @@ class Oval(TupyObject):
 class Label(TupyObject):
     def __init__(self, text, x, y, font='Arial 20', color='black', anchor='nw'):
         self._tkid = global_canvas.create_text(x, y, text=text, font=font, fill=color, anchor=anchor)
-        registry.add_object(self)
+        objects.add_object(self)
     
     @property
     def x(self):
@@ -155,7 +155,7 @@ class Label(TupyObject):
 class Rectangle(TupyObject):
     def __init__(self, x, y, w, h, outline='black', fill=''):
         self._tkid = global_canvas.create_rectangle(x, y, x + w, y + h, outline=outline, fill=fill)
-        registry.add_object(self)
+        objects.add_object(self)
 
     @property
     def x(self):
@@ -218,7 +218,7 @@ class Image(TupyObject):
         self._angle = 0
         self._input = input
 
-        registry.add_object(self)
+        objects.add_object(self)
 
     @property
     def _top_left(self):

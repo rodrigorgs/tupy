@@ -10,5 +10,7 @@ class Registry:
         del self._objects[obj._tkid]
     
     def get_object(self, id):
-        print(self._objects)
         return self._objects.get(id, None)
+
+    def __getitem__(self, id):
+        return self.get_object(id)
