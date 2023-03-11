@@ -9,7 +9,12 @@ class Inspector:
         if isinstance(type, str):
             type = eval(type)
         return [var for var in self._env if not var.startswith('_') and isinstance(self._env[var], type)]
-    
+
+    def object_has_type(self, obj, type):
+        if isinstance(type, str):
+            type = eval(type)
+        return isinstance(obj, type)
+
     def public_objects(self, type=object):
         if isinstance(type, str):
             type = eval(type)

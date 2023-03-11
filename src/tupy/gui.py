@@ -248,7 +248,9 @@ class Window:
 
     def select_object(self, obj):
         self._selected_object = obj
-        if obj is None:
+        # TODO: replace TupyObject by common supertype (move logic to inspector)
+        if obj is None or not self._inspector.object_has_type(obj, self._common_supertype):
+            self._selected_object = None
             self.canvas.itemconfig(self._selection_box, outline='')
         else:
             self.canvas.itemconfig(self._selection_box, outline='darkgray', dash=(5, 5))
