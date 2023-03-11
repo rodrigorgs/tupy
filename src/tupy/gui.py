@@ -260,8 +260,6 @@ class Window:
     def select_object(self, obj, obj_name):
         self._selected_object = obj
         self._selected_variable = obj_name
-        print('select object', obj, obj_name)
-        traceback.print_stack(limit=6)
         if obj is None or not self._inspector.object_has_type(obj, self._common_supertype):
             self._selected_object = None
             self._selected_variable = None
@@ -270,7 +268,6 @@ class Window:
         else:
             self.canvas.itemconfig(self._selection_box, outline='darkgray', dash=(5, 5))
             self.canvas.tag_raise(self._selection_box)
-            print('select object', obj)
             self.update_member_pane(obj, obj_name)
 
     def on_click_object(self, tree):
@@ -301,7 +298,6 @@ class Window:
             if self._selected_variable in self.object_pane.get_children():
                 self.object_pane.selection_set(self._selected_variable)
             else:
-                print('selection_set \'\'')
                 self.object_pane.selection_set(' ')
 
     def on_click_member(self, tree, obj_name):
@@ -321,10 +317,8 @@ class Window:
         item = tree.item(index)
         method_name = item['values'][0]
 
-        print('click method obj_name', obj_name)
         # obj = self._inspector.object_for_variable(obj_name)
         obj = self._selected_object
-        print('obj', obj)
         method = self._inspector.get_method(obj, method_name)
         info = self._inspector.method_info(method)
         if self._inspector.method_parameters(method) == []:
@@ -333,7 +327,6 @@ class Window:
             params = simpledialog.askstring(_("Provide parameters"), _("Comma-separated parameter list:") + "\n" + str(info))
         if params is not None:
             # if obj_name is not None and obj_name != '':
-            print('run_command')
             self.run_command(f'{obj_name}.{method_name}({params})', use_eval = True)
             # else:
             #     # params_tuple = self._inspector.eval(f'({params},)')
@@ -347,8 +340,6 @@ class Window:
             self.update_member_pane(obj, obj_name=obj_name)
 
     def update_member_pane(self, obj, obj_name):
-        print('update_member_pane', obj, obj_name)
-        traceback.print_stack(limit=6)
         for child in self.member_pane.winfo_children():
             child.destroy()
 

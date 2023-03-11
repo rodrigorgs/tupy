@@ -21,7 +21,7 @@ class Inspector:
         return [self._env[var] for var in self.public_variables(type=type)]
 
     def eval(self, str):
-        print('eval', str)
+        # print('eval', str)
         return eval(str, self._env)
     
     def object_for_variable(self, var):
