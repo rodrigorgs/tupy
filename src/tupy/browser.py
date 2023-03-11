@@ -28,7 +28,6 @@ class Browser(tk.Toplevel):
         outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         self.title(_('Objects'))
-        self.bind("<Escape>", lambda _event: self.withdraw())
         self.lift()
         
         self.path_label = ttk.Label(outer, text=self.current_path, font=(None, 18, 'bold'))

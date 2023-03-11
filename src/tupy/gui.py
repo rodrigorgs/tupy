@@ -26,6 +26,7 @@ class Window:
         self._selected_object = None
         self._selected_variable = None
         self.is_paused = False
+        self.browser = None
 
     def create(self):
         self.root = tk.Tk()
@@ -108,9 +109,17 @@ class Window:
         return toolbar
 
     def browse_objects(self):
-        self.browser = Browser(self.root, inspector=self._inspector)
-        self.browser.add_selection_listener(self._on_browser_select)
+        if self.browser is None:
+            self.browser = Browser(self.root, inspector=self._inspector)
+            self.browser.bind("<Escape>", lambda _event: self._close_browser())
+            self.browser.add_selection_listener(self._on_browser_select)
+        else:
+            self.browser.lift()
     
+    def _close_browser(self):
+        self.browser.destroy()
+        self.browser = None
+
     def _on_browser_select(self, path, obj):
         print('on_browser_select', path, obj)
         self.select_object(obj)
