@@ -122,8 +122,7 @@ class Window:
         self.browser = None
 
     def _on_browser_select(self, path, obj):
-        print('on_browser_select', path, obj)
-        self.select_object(obj)
+        self.select_object(obj, path)
         
 
     def create_side_pane(self, parent):
@@ -256,17 +255,19 @@ class Window:
     def submit_console(self, _event):
         self.run_command(self.console.get(), on_end=lambda: self.console.delete(0, tk.END))
 
-    def select_object(self, obj):
+    def select_object(self, obj, obj_name=None):
         self._selected_object = obj
+        self._selected_variable = obj_name
         if obj is None or not self._inspector.object_has_type(obj, self._common_supertype):
             self._selected_object = None
+            self._selected_variable = None
             self.canvas.itemconfig(self._selection_box, outline='')
-            self.update_member_pane(None, param_type='object')
+            self.update_member_pane(None, '')
         else:
             self.canvas.itemconfig(self._selection_box, outline='darkgray', dash=(5, 5))
             self.canvas.tag_raise(self._selection_box)
             print('select object', obj)
-            self.update_member_pane(obj, param_type='object')
+            self.update_member_pane(obj, obj_name)
 
     def on_click_object(self, tree):
         index = tree.selection()[0]
@@ -276,7 +277,7 @@ class Window:
         if obj_name == '':
             self.select_object(None)
         else:
-            self.select_object(self._inspector.object_for_variable(obj_name))
+            self.select_object(self._inspector.object_for_variable(obj_name), obj_name)
 
     def update_object_pane(self):
         self.object_pane.delete(*self.object_pane.get_children())
@@ -306,15 +307,18 @@ class Window:
         if new_value_str is not None:
             new_value = eval(new_value_str)
             setattr(self._selected_object, attr_name, new_value)
-            self.update_member_pane(obj_name)
+            obj = eval(obj_name, self._inspector._env)
+            self.update_member_pane(obj, obj_name=obj_name)
 
     def on_click_method(self, tree, obj_name):
         index = tree.selection()[0]
         item = tree.item(index)
         method_name = item['values'][0]
-        value = item['values'][1]
 
-        obj = self._inspector.object_for_variable(obj_name)
+        print('click method obj_name', obj_name)
+        # obj = self._inspector.object_for_variable(obj_name)
+        obj = self._selected_object
+        print('obj', obj)
         method = self._inspector.get_method(obj, method_name)
         info = self._inspector.method_info(method)
         if self._inspector.method_parameters(method) == []:
@@ -322,25 +326,22 @@ class Window:
         else:
             params = simpledialog.askstring(_("Provide parameters"), _("Comma-separated parameter list:") + "\n" + str(info))
         if params is not None:
-            self.run_command(f'{obj_name}.{method_name}({params})', use_eval = True)
-            self.update_member_pane(obj_name)
+            if obj_name is not None and obj_name != '':
+                self.run_command(f'{obj_name}.{method_name}({params})', use_eval = True)
+            else:
+                # params_tuple = self._inspector.eval(f'({params},)')
+                if params.strip() == '':
+                    ret = method()
+                else:
+                    params_tuple = (self._inspector.eval(p) for p in params.split(','))
+                    ret = method(*params_tuple)
+                if ret is not None:
+                    self.write_on_history(f'=> {ret}\n', tag='output')
+            self.update_member_pane(obj, obj_name=obj_name)
 
-
-    def update_member_pane(self, obj_name, param_type='path'):
+    def update_member_pane(self, obj, obj_name):
         for child in self.member_pane.winfo_children():
             child.destroy()
-
-        # if obj_name not in self._inspector.public_variables(type=self._common_supertype):
-        #     return
-
-        # ttk.Label(self.member_pane, text=f"{obj_name}'s attributes", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-        # obj = self._inspector.object_for_variable(obj_name)
-        if param_type == 'path':
-            obj = eval(obj_name, self._inspector._env)
-        elif param_type == 'object':
-            obj = obj_name
-        else:
-            raise ValueError(f'Invalid param_type: {param_type}')
 
         if obj is None:
             return
@@ -363,12 +364,7 @@ class Window:
 
         
         for attr in self._inspector.get_public_attributes(obj):
-            print('obj', obj)
-            print('attr', attr)
             attr_value = getattr(obj, attr)
-            print('value', attr_value)
-            print('rep', repr(attr_value))
-            print('type', type(attr_value))
             tuple = (attr, repr(attr_value), type(attr_value).__name__)
             tree.insert('', tk.END, values=tuple)
             tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
@@ -418,7 +414,7 @@ class Window:
             obj = self._registry.get_object(id)
             if (obj is not None) and (not obj._contains_point(event.x, event.y)):
                 obj = None
-            self.select_object(obj)
+            self.select_object(obj, None)
         self.canvas.focus_set()
 
     def main_loop(self):

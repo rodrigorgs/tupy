@@ -20,8 +20,12 @@ class Inspector:
             type = eval(type)
         return [self._env[var] for var in self.public_variables(type=type)]
 
+    def eval(self, str):
+        print('eval', str)
+        return eval(str, self._env)
+    
     def object_for_variable(self, var):
-        return eval(var, self._env)
+        return self.eval(var)
         # return self._env[var]
 
     def destroy_variable(self, var):
