@@ -3,10 +3,15 @@ from PIL import ImageTk, Image as PILImage
 import importlib.resources as pkg_resources
 import os
 import random
+import gettext
 
 from tupy.gui import Window
-from tupy.input import InputMap
+from tupy.input_map import InputMap
 from tupy.inspector import Inspector
+
+_translation = gettext.translation('tupy', localedir='tupy/locale', 
+        languages=['en', 'pt_BR'])
+_translation.install()
 
 global_canvas = None
 inspector: Optional[Inspector] = None

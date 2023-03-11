@@ -7,21 +7,9 @@ import tkinter.ttk as ttk
 from contextlib import redirect_stdout, redirect_stderr
 import io
 from tupy.history import CommandHistory
-import gettext
+from tupy.browser import Browser
 
-_translation = gettext.translation('tupy', localedir='tupy/locale', 
-        languages=['en', 'pt_BR'])
-_translation.install()
-_ = _translation.gettext
-
-def create_treeview_with_scrollbar(parent):
-    frame = ttk.Frame(parent)
-    treeview = ttk.Treeview(frame)
-    scrollbar = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=treeview.yview)
-    treeview.configure(yscrollcommand=scrollbar.set)
-    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-    treeview.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-    return (treeview, frame)
+from tupy.gui_utils import create_treeview_with_scrollbar
 
 class Window:
     CANVAS_WIDTH = 640
@@ -43,6 +31,8 @@ class Window:
         self.root = tk.Tk()
         self.root.title('Tupy')
         self.root.bind("<Escape>", lambda _event: self.root.destroy())
+
+        # self.create_navigator()
 
         self.toolbar = self.create_toolbar(self.root)
         self.toolbar.pack(side=tk.TOP, fill=tk.X, pady=3)
@@ -87,6 +77,16 @@ class Window:
         self.is_paused = True
         self.update_objects()
 
+    def create_navigator(self):
+        nav = tk.Toplevel(self.root)
+        nav.title(_('Objects'))
+        nav.bind("<Escape>", lambda _event: nav.withdraw())
+        nav.lift()
+        nav_tv, nav_tv_frame = create_treeview_with_scrollbar(nav)
+        # nav_tv.bind('<<TreeviewSelect>>', self._on_navigator_treeview_select)
+        nav_tv_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+
     def create_toolbar(self, parent):
         toolbar = ttk.Frame(parent, height=30)
 
@@ -94,16 +94,21 @@ class Window:
         button_pause = ttk.Button(toolbar, text="❙❙", command=self.pause)
         button_step = ttk.Button(toolbar, text="▶❙", command=self.step)
         button_add = ttk.Button(toolbar, text="➕ " + _("New object..."), command=self.ask_create_object)
+        button_browser = ttk.Button(toolbar, text="ⓘ " + _("Browse objects..."), command=self.browse_objects)
 
         button_run.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
         button_pause.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
         button_step.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
         button_add.pack(side=tk.RIGHT, padx=3, ipadx=2, ipady=2)
+        button_browser.pack(side=tk.RIGHT, padx=3, ipadx=2, ipady=2)
 
         self.button_pause = button_pause
 
         toolbar.pack(side=tk.TOP, fill=tk.X, expand=False)
         return toolbar
+
+    def browse_objects(self):
+        self.browser = Browser(self.root, inspector=self._inspector)
 
     def create_side_pane(self, parent):
         side_pane = ttk.PanedWindow(parent, orient=tk.VERTICAL, width=self.SIDE_PANE_WIDTH)
