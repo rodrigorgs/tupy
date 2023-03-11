@@ -397,11 +397,15 @@ class Window:
             tree_methods.bind("<<TreeviewSelect>>", lambda e: self.on_click_method(tree_methods, obj_name))
 
     def update_objects(self):
-        updated_object_ids = set()
-        for obj in self._inspector.public_objects(type=self._common_supertype):
-            if hasattr(obj, 'update') and id(obj) not in updated_object_ids:
-                obj.update()
-                updated_object_ids.add(id(obj))
+        # if there is a global update function
+        if 'update' in self._inspector._env:
+            self._inspector._env['update']()
+        else:
+            updated_object_ids = set()
+            for obj in self._inspector.public_objects(type=self._common_supertype):
+                if hasattr(obj, 'update') and id(obj) not in updated_object_ids:
+                    obj.update()
+                    updated_object_ids.add(id(obj))
 
     def run_updates(self):
         if not self.is_paused:
