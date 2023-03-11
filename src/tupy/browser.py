@@ -55,7 +55,7 @@ class Browser(tk.Toplevel):
             self.current_path = self.get_parent(self.current_path)
             self.update_ui()
         else:
-            self.current_path = f'{self.current_path}.{name}'
+            self.current_path = f'{self.current_path}{item}'
             if self.current_path.startswith('.'):
                 self.current_path = self.current_path[1:]
             self.update_ui()
@@ -64,7 +64,8 @@ class Browser(tk.Toplevel):
 
     def get_parent(self, name):
         if '.' in name:
-            return name[:name.rfind('.')]
+            last_index = max(name.rfind('['), name.rfind('.'))
+            return name[:last_index]
         else:
             return ''
 
@@ -79,9 +80,15 @@ class Browser(tk.Toplevel):
             self.value_label.configure(text=str)
             self.path_label.configure(text=self.current_path)
             
-            self.treeview.insert('', tk.END, text='⇦', values=('⇦'))
+            self.treeview.insert('', tk.END, iid='⇦', text='⇦', values=('⇦'))
         for name in self.get_attributes():
-            self.treeview.insert('', tk.END, text=name, values=(name))
+            iid = name
+            if not iid.startswith('['):
+                iid = f'.{name}'
+            name = f'{self.current_path}{iid}'
+            if name.startswith('.'):
+                name = name[1:]
+            self.treeview.insert('', tk.END, iid=iid, text=name, values=(name))
 
     @property
     def current_object(self):
@@ -93,8 +100,8 @@ class Browser(tk.Toplevel):
         else:
             obj = self.current_object
             if isinstance(obj, (list, tuple)):
-                return [f'__getitem__({i})' for i in range(len(obj))]
+                return [f'[{i}]' for i in range(len(obj))]
             elif isinstance(obj, dict):
-                return [f'__getitem__({repr(k)})' for k in obj.keys()]
+                return [f'[{repr(k)}]' for k in obj.keys()]
             else:
                 return self.inspector.get_public_attributes(self.current_object)
