@@ -406,8 +406,7 @@ class Window:
         # TODO: discount update time
         self.root.after(self.UPDATE_DELAY, self.run_updates)
 
-    def canvas_click(self, event):
-        self._input.on_mouse_press(event)
+    def select_object_on_canvas(self, event):
         ids = self.canvas.find_closest(event.x, event.y)
         if len(ids) == 1:
             id = ids[0]
@@ -415,6 +414,11 @@ class Window:
             if (obj is not None) and (not obj._contains_point(event.x, event.y)):
                 obj = None
             self.select_object(obj, None)
+
+    def canvas_click(self, event):
+        self._input.on_mouse_press(event)
+        if self.canvas.focus_get() is not None:
+            self.select_object_on_canvas(event)
         self.canvas.focus_set()
 
     def main_loop(self):
