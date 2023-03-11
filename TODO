@@ -6,3 +6,4 @@ TODO
 - When calling a method or setting an attribute using the UI, potential exceptions should be shown on history
 - Release mode: run(globals(), release=true) should open the application showing only the canvas
 - Create class ImageData to encapsulate a PIL Image
+- Show object id in hexadecimal

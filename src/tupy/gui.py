@@ -109,6 +109,12 @@ class Window:
 
     def browse_objects(self):
         self.browser = Browser(self.root, inspector=self._inspector)
+        self.browser.add_selection_listener(self._on_browser_select)
+    
+    def _on_browser_select(self, path, obj):
+        print('on_browser_select', path, obj)
+        self.select_object(obj)
+        self.update_member_pane(path)
 
     def create_side_pane(self, parent):
         side_pane = ttk.PanedWindow(parent, orient=tk.VERTICAL, width=self.SIDE_PANE_WIDTH)

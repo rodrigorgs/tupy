@@ -13,6 +13,15 @@ class Browser(tk.Toplevel):
 
         self.treeview = self.configure_ui()
         self.update_ui()
+        self.selection_listeners = []
+
+    def add_selection_listener(self, listener):
+        self.selection_listeners.append(listener)
+    def remove_selection_listener(self, listener):
+        self.selection_listeners.remove(listener)
+    def notify_selection_listeners(self, path, object):
+        for listener in self.selection_listeners:
+            listener(path, object)
 
     def configure_ui(self):
         outer = ttk.Frame(self, height=200)
@@ -51,6 +60,8 @@ class Browser(tk.Toplevel):
             if self.current_path.startswith('.'):
                 self.current_path = self.current_path[1:]
             self.update_ui()
+        
+        self.notify_selection_listeners(self.current_path, self.current_object)
 
     def get_parent(self, name):
         if '.' in name:
