@@ -93,7 +93,9 @@ class Browser(tk.Toplevel):
             return self.inspector.public_variables(type='tupy.TupyObject')
         else:
             obj = self.current_object
-            if isinstance(obj, list):
+            if isinstance(obj, (list, tuple)):
                 return [f'__getitem__({i})' for i in range(len(obj))]
+            elif isinstance(obj, dict):
+                return [f'__getitem__({repr(k)})' for k in obj.keys()]
             else:
                 return self.inspector.get_public_attributes(self.current_object)
