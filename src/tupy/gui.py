@@ -17,7 +17,7 @@ class Window:
     SIDE_PANE_WIDTH = 280
     UPDATE_DELAY = 1000 // 30
 
-    def __init__(self, inspector, input, common_supertype):
+    def __init__(self, inspector, input, common_supertype, registry):
         self._inspector = inspector
         self._common_supertype = common_supertype
         self._input = input
@@ -27,6 +27,7 @@ class Window:
         self._selected_variable = None
         self.is_paused = False
         self.browser = None
+        self._registry = registry
 
     def create(self):
         self.root = tk.Tk()
@@ -123,7 +124,7 @@ class Window:
     def _on_browser_select(self, path, obj):
         print('on_browser_select', path, obj)
         self.select_object(obj)
-        self.update_member_pane(path)
+        
 
     def create_side_pane(self, parent):
         side_pane = ttk.PanedWindow(parent, orient=tk.VERTICAL, width=self.SIDE_PANE_WIDTH)
@@ -260,9 +261,12 @@ class Window:
         if obj is None or not self._inspector.object_has_type(obj, self._common_supertype):
             self._selected_object = None
             self.canvas.itemconfig(self._selection_box, outline='')
+            self.update_member_pane(None, param_type='object')
         else:
             self.canvas.itemconfig(self._selection_box, outline='darkgray', dash=(5, 5))
             self.canvas.tag_raise(self._selection_box)
+            print('select object', obj)
+            self.update_member_pane(obj, param_type='object')
 
     def on_click_object(self, tree):
         index = tree.selection()[0]
@@ -273,7 +277,6 @@ class Window:
             self.select_object(None)
         else:
             self.select_object(self._inspector.object_for_variable(obj_name))
-        self.update_member_pane(obj_name)
 
     def update_object_pane(self):
         self.object_pane.delete(*self.object_pane.get_children())
@@ -323,7 +326,7 @@ class Window:
             self.update_member_pane(obj_name)
 
 
-    def update_member_pane(self, obj_name):
+    def update_member_pane(self, obj_name, param_type='path'):
         for child in self.member_pane.winfo_children():
             child.destroy()
 
@@ -332,7 +335,15 @@ class Window:
 
         # ttk.Label(self.member_pane, text=f"{obj_name}'s attributes", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         # obj = self._inspector.object_for_variable(obj_name)
-        obj = eval(obj_name, self._inspector._env)
+        if param_type == 'path':
+            obj = eval(obj_name, self._inspector._env)
+        elif param_type == 'object':
+            obj = obj_name
+        else:
+            raise ValueError(f'Invalid param_type: {param_type}')
+
+        if obj is None:
+            return
         # if not self._inspector.object_has_type(obj, self._common_supertype):
         #     return
         ttk.Label(self.member_pane, text=_("Object information"), font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
@@ -352,7 +363,13 @@ class Window:
 
         
         for attr in self._inspector.get_public_attributes(obj):
-            tuple = (attr, repr(getattr(obj, attr)), type(getattr(obj, attr)).__name__)
+            print('obj', obj)
+            print('attr', attr)
+            attr_value = getattr(obj, attr)
+            print('value', attr_value)
+            print('rep', repr(attr_value))
+            print('type', type(attr_value))
+            tuple = (attr, repr(attr_value), type(attr_value).__name__)
             tree.insert('', tk.END, values=tuple)
             tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
 
@@ -395,6 +412,11 @@ class Window:
 
     def canvas_click(self, event):
         self._input.on_mouse_press(event)
+        ids = self.canvas.find_closest(event.x, event.y, halo=5)
+        if len(ids) == 1:
+            id = ids[0]
+            obj = self._registry.get_object(id)
+            self.select_object(obj)
         self.canvas.focus_set()
 
     def main_loop(self):
