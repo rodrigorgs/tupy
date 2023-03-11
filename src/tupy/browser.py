@@ -89,4 +89,8 @@ class Browser(tk.Toplevel):
         if self.current_path == '':
             return self.inspector.public_variables(type='tupy.TupyObject')
         else:
-            return self.inspector.get_public_attributes(self.current_object)
+            obj = self.current_object
+            if isinstance(obj, list):
+                return [f'__getitem__({i})' for i in range(len(obj))]
+            else:
+                return self.inspector.get_public_attributes(self.current_object)
