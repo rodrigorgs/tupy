@@ -43,7 +43,7 @@ class TupyObject:
         return self.x, self.y
     
     def __str__(self) -> str:
-        return f'<{self.__class__.__name__}:{id(self)}>'
+        return f'<{self.__class__.__name__}:0x{id(self):02x}>'
 
 class Oval(TupyObject):
     def __init__(self, x, y, width, height, outline='black', fill=''):

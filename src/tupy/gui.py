@@ -327,7 +327,7 @@ class Window:
         # if not self._inspector.object_has_type(obj, self._common_supertype):
         #     return
         ttk.Label(self.member_pane, text=_("Object information"), font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-        ttk.Label(self.member_pane, text=_("Type") + f": {obj.__class__.__name__}, id: {id(obj)}", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
+        ttk.Label(self.member_pane, text=_("Type") + f": {obj.__class__.__name__}, id: 0x{id(obj):02x}", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         ttk.Label(self.member_pane, text=_("Attributes"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
 
         cols = ('name', 'value', 'class')
