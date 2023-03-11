@@ -32,6 +32,11 @@ class TupyObject:
         registry.remove_object(self)
         window.update_object_pane()
 
+    def _contains_point(self, px, py):
+        x, y = self.x, self.y
+        w, h = self._width / 2, self._height / 2
+        return abs(x - px) < w and abs(y - py) < h
+
     def collides_with(self, other):
         if not isinstance(other, TupyObject):
             raise TypeError('checking collision: other must be a tupy.Object')

@@ -11,4 +11,4 @@ class Registry:
     
     def get_object(self, id):
         print(self._objects)
-        return self._objects[id]
+        return self._objects.get(id, None)

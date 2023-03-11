@@ -412,10 +412,12 @@ class Window:
 
     def canvas_click(self, event):
         self._input.on_mouse_press(event)
-        ids = self.canvas.find_closest(event.x, event.y, halo=5)
+        ids = self.canvas.find_closest(event.x, event.y)
         if len(ids) == 1:
             id = ids[0]
             obj = self._registry.get_object(id)
+            if (obj is not None) and (not obj._contains_point(event.x, event.y)):
+                obj = None
             self.select_object(obj)
         self.canvas.focus_set()
 
