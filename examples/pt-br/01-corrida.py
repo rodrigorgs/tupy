@@ -25,10 +25,12 @@ class Star(Image):
         if self._ligado:
             self.x = (self.x + self.velocidade) % 640
 
+_label1 = Label('Experimente chamar os métodos das estrelas', 5, 5)
+_label2 = Label('(por exemplo, liga e desliga)', 5, 30)
 s1 = Star()
 s2 = Star()
 
-s1.y = 50
-s2.y = 150
+s1.y = 150
+s2.y = 250
 
 run(globals())

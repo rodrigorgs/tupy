@@ -7,7 +7,8 @@ class Registry:
         self._objects[obj._tkid] = obj
     
     def remove_object(self, obj):
-        del self._objects[obj._tkid]
+        if '_tkid' in obj.__dict__:
+            del self._objects[obj._tkid]
     
     def get_object(self, id):
         return self._objects.get(id, None)

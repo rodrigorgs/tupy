@@ -1,5 +1,6 @@
 TODO
 
+- Turn object pane into an object browser; clicking on a button to navigate, and elsewhere to select
 - Update the selected object's attribute values every frame
 - When calling a method or setting an attribute using the UI, potential exceptions should be shown on history
 - Release mode: run(globals(), release=true) should open the application showing only the canvas

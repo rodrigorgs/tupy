@@ -72,6 +72,7 @@ class Estrela(Image):
             return 'apagada'
 
 
+_label1 = Label('Chame os métodos do drone para capturar as estrelas', 5, 5)
 drone = Drone()
 item1 = Estrela(150, 250)
 item2 = Estrela(250, 150)

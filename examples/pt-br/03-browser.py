@@ -17,6 +17,7 @@ class Drone(Image):
         self.tuple = (1, 2, 3)
         self.dict = {'a': 1, 'b': 2, 'c': 3}
 
+label1 = Label('Explore os objetos através do editor.', 5, 5)
 drone = Drone()
 
 def update():
