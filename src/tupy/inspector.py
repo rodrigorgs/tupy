@@ -21,7 +21,8 @@ class Inspector:
         return [self._env[var] for var in self.public_variables(type=type)]
 
     def object_for_variable(self, var):
-        return self._env[var]
+        return eval(var, self._env)
+        # return self._env[var]
 
     def destroy_variable(self, var):
         del self._env[var]

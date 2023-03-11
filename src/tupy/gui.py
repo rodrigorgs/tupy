@@ -248,7 +248,6 @@ class Window:
 
     def select_object(self, obj):
         self._selected_object = obj
-        # TODO: replace TupyObject by common supertype (move logic to inspector)
         if obj is None or not self._inspector.object_has_type(obj, self._common_supertype):
             self._selected_object = None
             self.canvas.itemconfig(self._selection_box, outline='')
@@ -319,11 +318,14 @@ class Window:
         for child in self.member_pane.winfo_children():
             child.destroy()
 
-        if obj_name not in self._inspector.public_variables(type=self._common_supertype):
-            return
+        # if obj_name not in self._inspector.public_variables(type=self._common_supertype):
+        #     return
 
         # ttk.Label(self.member_pane, text=f"{obj_name}'s attributes", font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-        obj = self._inspector.object_for_variable(obj_name)
+        # obj = self._inspector.object_for_variable(obj_name)
+        obj = eval(obj_name, self._inspector._env)
+        # if not self._inspector.object_has_type(obj, self._common_supertype):
+        #     return
         ttk.Label(self.member_pane, text=_("Object information"), font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         ttk.Label(self.member_pane, text=_("Type") + f": {obj.__class__.__name__}, id: {id(obj)}", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         ttk.Label(self.member_pane, text=_("Attributes"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
