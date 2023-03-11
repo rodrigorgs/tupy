@@ -75,8 +75,11 @@ class Browser(tk.Toplevel):
             self.path_label.configure(text=_('Global'))
             self.value_label.configure(text='')
         else:
+            str = repr(self.current_object)
+            str = (str[:40] + '...') if len(str) > 40 else str
+            self.value_label.configure(text=str)
             self.path_label.configure(text=self.current_path)
-            self.value_label.configure(text=repr(self.current_object))
+            
             self.treeview.insert('', tk.END, text='⇦', values=('⇦'))
         for name in self.get_attributes():
             self.treeview.insert('', tk.END, text=name, values=(name))
