@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-25 06:52-0300\n"
+"POT-Creation-Date: 2023-03-10 23:09-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,27 +17,35 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui.py:96
+#: gui.py:83
+msgid "Objects"
+msgstr "Objetos"
+
+#: gui.py:97
 msgid "New object..."
 msgstr "Novo objeto..."
 
-#: gui.py:124
+#: gui.py:98
+msgid "Browse objects..."
+msgstr "Explorar objetos..."
+
+#: gui.py:144
 msgid "Global variables"
 msgstr "Variáveis globais"
 
-#: gui.py:129 gui.py:324 gui.py:341
+#: gui.py:149 gui.py:348 gui.py:365
 msgid "Name"
 msgstr "Nome"
 
-#: gui.py:130
+#: gui.py:150
 msgid "Value (object)"
 msgstr "Valor (objeto)"
 
-#: gui.py:138
+#: gui.py:158
 msgid "Variable name"
 msgstr "Nome da variável"
 
-#: gui.py:138
+#: gui.py:158
 msgid ""
 "Enter a name for the new object\n"
 "(must be a valid Python identifier)\n"
@@ -47,19 +55,19 @@ msgstr ""
 "(deve ser um identificador Python válido)\n"
 "ou deixe vazio para um nome aleatório"
 
-#: gui.py:145
+#: gui.py:165
 msgid "Class name"
 msgstr "Nome da classe"
 
-#: gui.py:145
+#: gui.py:165
 msgid "Enter the name of the class to instantiate:"
 msgstr "Digite o nome da classe para instanciar:"
 
-#: gui.py:157
+#: gui.py:177
 msgid "Constructor parameters"
 msgstr "Parâmetros do construtor"
 
-#: gui.py:157
+#: gui.py:177
 #, python-brace-format
 msgid ""
 "Enter the parameters for the constructor of {classname}:\n"
@@ -68,48 +76,47 @@ msgstr ""
 "Digite os parâmetros para o construtor de {classname}:\n"
 "{info}"
 
-#: gui.py:281
+#: gui.py:302
 msgid "Set value"
 msgstr "Definir valor"
 
-#: gui.py:281
+#: gui.py:302
 #, python-brace-format
 msgid "New value for {attr_name}:"
 msgstr "Novo valor para {attr_name}:"
 
-#: gui.py:299
+#: gui.py:320
 msgid "Provide parameters"
 msgstr "Forneça parâmetros"
 
-#: gui.py:299
+#: gui.py:320
 msgid "Comma-separated parameter list:"
 msgstr "Lista de parâmetros separados por vírgulas:"
 
-#: gui.py:314
+#: gui.py:338
 msgid "Object information"
 msgstr "Informações do objeto"
 
-#: gui.py:315
+#: gui.py:339
 msgid "Type"
 msgstr "Tipo"
 
-#: gui.py:316
+#: gui.py:340
 msgid "Attributes"
 msgstr "Atributos"
 
-#: gui.py:325
+#: gui.py:349
 msgid "Value"
 msgstr "Valor"
 
-#: gui.py:326
+#: gui.py:350
 msgid "Value's Class"
 msgstr "Classe do valor"
 
-#: gui.py:335
+#: gui.py:359
 msgid "Methods"
 msgstr "Métodos"
 
-#: gui.py:342
-#, fuzzy
+#: gui.py:366
 msgid "Parameters"
 msgstr "Parâmetros"
