@@ -38,9 +38,11 @@ class Browser(tk.Toplevel):
 
         treeview, frame = create_treeview_with_scrollbar(outer)
 
-        treeview.configure(columns=('name'), show='headings')
+        treeview.configure(columns=('name', 'value'), show='headings')
         treeview.column('name', stretch=tk.YES, width=150)
+        treeview.column('value', stretch=tk.YES, width=150)
         treeview.heading('name', text=_('Name'))
+        treeview.heading('value', text=_('Value'))
 
         treeview.bind('<<TreeviewSelect>>', self._on_item_select)
         frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -75,9 +77,9 @@ class Browser(tk.Toplevel):
             self.path_label.configure(text=_('Global'))
             self.value_label.configure(text='')
         else:
-            str = repr(self.current_object)
-            str = (str[:40] + '...') if len(str) > 40 else str
-            self.value_label.configure(text=str)
+            value_string = repr(self.current_object)
+            value_string = (value_string[:40] + '...') if len(value_string) > 40 else value_string
+            self.value_label.configure(text=value_string)
             self.path_label.configure(text=self.current_path)
             
             self.treeview.insert('', tk.END, iid='⇦', text='⇦', values=('⇦'))
@@ -88,7 +90,8 @@ class Browser(tk.Toplevel):
             name = f'{self.current_path}{iid}'
             if name.startswith('.'):
                 name = name[1:]
-            self.treeview.insert('', tk.END, iid=iid, text=name, values=(name))
+            value = self.inspector.object_for_variable(name)
+            self.treeview.insert('', tk.END, iid=iid, text=name, values=(name, str(value)))
 
     @property
     def current_object(self):
