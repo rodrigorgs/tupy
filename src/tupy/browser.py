@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
+import tkinter.simpledialog as simpledialog
 from tupy.gui_utils import create_treeview_with_scrollbar
 
 class Browser(tk.Toplevel):
@@ -58,6 +59,7 @@ class Browser(tk.Toplevel):
 
         COLUMN_ACTION = '#3'
         COLUMN_SELECT = '#1'
+        COLUMN_EDIT = '#2'
 
         if name == '⇦':
             self.current_path = self.get_parent(self.current_path)
@@ -77,6 +79,19 @@ class Browser(tk.Toplevel):
                 path = path[1:]
             object = eval(path, self.inspector._env)
             self.notify_selection_listeners(path, object)
+        elif column == COLUMN_EDIT:
+            # TODO: refactor to remove duplication
+            path = f'{self.current_path}{item}'
+            if path.startswith('.'):
+                path = path[1:]
+            value = repr(self.inspector.object_for_variable(path))
+            self.will_edit_value(name, value) # TODO: change '' to value
+
+    def will_edit_value(self, attr_name, value):
+        new_value_str = simpledialog.askstring(_('Set value'), _('New value for {attr_name}:').format(attr_name=attr_name), initialvalue=value)
+        if new_value_str is not None:
+            exec(f'{attr_name} = {new_value_str}', self.inspector._env) # TODO: run on console
+            self.update_ui()
 
     def get_parent(self, name):
         if '.' in name:
