@@ -38,31 +38,45 @@ class Browser(tk.Toplevel):
 
         treeview, frame = create_treeview_with_scrollbar(outer)
 
-        treeview.configure(columns=('name', 'value'), show='headings')
+        treeview.configure(columns=('name', 'value', 'action'), show='headings')
         treeview.column('name', stretch=tk.YES, width=150)
         treeview.column('value', stretch=tk.YES, width=150)
+        treeview.column('action', stretch=tk.YES, width=30)
         treeview.heading('name', text=_('Name'))
         treeview.heading('value', text=_('Value'))
+        treeview.heading('action', text='')
 
-        treeview.bind('<<TreeviewSelect>>', self._on_item_select)
+        treeview.bind('<Button-1>', self._on_item_select)
         frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         return treeview
     
     def _on_item_select(self, event):
-        item = self.treeview.selection()[0]
+        item = self.treeview.identify_row(event.y)
         name = self.treeview.item(item, 'text')
+        column = self.treeview.identify_column(event.x)
+
+        COLUMN_ACTION = '#3'
+        COLUMN_SELECT = '#1'
 
         if name == '⇦':
             self.current_path = self.get_parent(self.current_path)
             self.update_ui()
-        else:
+            # TODO: remove selection
+            self.notify_selection_listeners(self.current_path, self.current_object)
+        elif column == COLUMN_ACTION:
             self.current_path = f'{self.current_path}{item}'
             if self.current_path.startswith('.'):
                 self.current_path = self.current_path[1:]
             self.update_ui()
-        
-        self.notify_selection_listeners(self.current_path, self.current_object)
+            self.notify_selection_listeners(self.current_path, self.current_object)
+        elif column == COLUMN_SELECT:
+            # TODO: refactor to remove duplication
+            path = f'{self.current_path}{item}'
+            if path.startswith('.'):
+                path = path[1:]
+            object = eval(path, self.inspector._env)
+            self.notify_selection_listeners(path, object)
 
     def get_parent(self, name):
         if '.' in name:
@@ -91,7 +105,7 @@ class Browser(tk.Toplevel):
             if name.startswith('.'):
                 name = name[1:]
             value = self.inspector.object_for_variable(name)
-            self.treeview.insert('', tk.END, iid=iid, text=name, values=(name, str(value)))
+            self.treeview.insert('', tk.END, iid=iid, text=name, values=(name, str(value), '⇨'))
 
     @property
     def current_object(self):
