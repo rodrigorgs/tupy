@@ -115,6 +115,7 @@ class Window:
             self.browser = Browser(self.root, inspector=self._inspector)
             self.browser.bind("<Escape>", lambda _event: self._close_browser())
             self.browser.add_selection_listener(self._on_browser_select)
+            self.browser.add_edit_listener(self._on_browser_edit)
         else:
             self.browser.lift()
     
@@ -125,6 +126,8 @@ class Window:
     def _on_browser_select(self, path, obj):
         self.select_object(obj, path)
         
+    def _on_browser_edit(self, path, value_str):
+        self.run_command(f'{path} = {value_str}')
 
     def create_side_pane(self, parent):
         side_pane = ttk.PanedWindow(parent, orient=tk.VERTICAL, width=self.SIDE_PANE_WIDTH)

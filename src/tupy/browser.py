@@ -15,6 +15,7 @@ class Browser(tk.Toplevel):
         self.treeview = self.configure_ui()
         self.update_ui()
         self.selection_listeners = []
+        self.edit_listeners = []
 
     def add_selection_listener(self, listener):
         self.selection_listeners.append(listener)
@@ -23,6 +24,14 @@ class Browser(tk.Toplevel):
     def notify_selection_listeners(self, path, object):
         for listener in self.selection_listeners:
             listener(path, object)
+
+    def add_edit_listener(self, listener):
+        self.edit_listeners.append(listener)
+    def remove_edit_listener(self, listener):
+        self.edit_listeners.remove(listener)
+    def notify_edit_listeners(self, path, value_str):
+        for listener in self.edit_listeners:
+            listener(path, value_str)
 
     def configure_ui(self):
         outer = ttk.Frame(self, height=200)
@@ -90,7 +99,7 @@ class Browser(tk.Toplevel):
     def will_edit_value(self, attr_name, value):
         new_value_str = simpledialog.askstring(_('Set value'), _('New value for {attr_name}:').format(attr_name=attr_name), initialvalue=value)
         if new_value_str is not None:
-            exec(f'{attr_name} = {new_value_str}', self.inspector._env) # TODO: run on console
+            self.notify_edit_listeners(attr_name, new_value_str)
             self.update_ui()
 
     def get_parent(self, name):
