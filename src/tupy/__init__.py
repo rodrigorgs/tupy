@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 from PIL import ImageTk, Image as PILImage
 import importlib.resources as pkg_resources
@@ -10,7 +11,7 @@ from tupy.input_map import InputMap
 from tupy.inspector import Inspector
 from tupy.registry import Registry
 
-_translation = gettext.translation('tupy', localedir='tupy/locale', 
+_translation = gettext.translation('tupy', localedir=os.path.join(os.path.dirname(__file__), 'locale'), 
         languages=['en', 'pt_BR'])
 _translation.install()
 
