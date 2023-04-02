@@ -97,31 +97,31 @@ class Window:
         button_pause = ttk.Button(toolbar, text="❙❙", command=self.pause)
         button_step = ttk.Button(toolbar, text="▶❙", command=self.step)
         button_add = ttk.Button(toolbar, text="➕ " + _("New object..."), command=self.ask_create_object)
-        button_browser = ttk.Button(toolbar, text="ⓘ " + _("Browse objects..."), command=self.browse_objects)
+        # button_browser = ttk.Button(toolbar, text="ⓘ " + _("Browse objects..."), command=self.browse_objects)
 
         button_run.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
         button_pause.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
         button_step.pack(side=tk.LEFT, padx=3, ipadx=2, ipady=2)
         button_add.pack(side=tk.RIGHT, padx=3, ipadx=2, ipady=2)
-        button_browser.pack(side=tk.RIGHT, padx=3, ipadx=2, ipady=2)
+        # button_browser.pack(side=tk.RIGHT, padx=3, ipadx=2, ipady=2)
 
         self.button_pause = button_pause
 
         toolbar.pack(side=tk.TOP, fill=tk.X, expand=False)
         return toolbar
 
-    def browse_objects(self):
-        if self.browser is None:
-            self.browser = Browser(self.root)
-            self.browser.bind("<Escape>", lambda _event: self._close_browser())
-            self.browser.add_selection_listener(self._on_browser_select)
-            self.browser.add_edit_listener(self._on_browser_edit)
-        else:
-            self.browser.lift()
+    # def browse_objects(self):
+    #     if self.browser is None:
+    #         self.browser = Browser(self.root)
+    #         self.browser.bind("<Escape>", lambda _event: self._close_browser())
+    #         self.browser.add_selection_listener(self._on_browser_select)
+    #         self.browser.add_edit_listener(self._on_browser_edit)
+    #     else:
+    #         self.browser.lift()
     
-    def _close_browser(self):
-        self.browser.destroy()
-        self.browser = None
+    # def _close_browser(self):
+    #     self.browser.destroy()
+    #     self.browser = None
 
     def _on_browser_select(self, path, obj):
         self.select_object(obj, path)
@@ -143,21 +143,28 @@ class Window:
         return side_pane
 
     def create_object_pane(self, parent):
-        outer = ttk.Frame(parent, height=200)
+        outer = Browser(parent, height=200)
         outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-
-        ttk.Label(outer, text=_('Global variables'), font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, pady=3)
-        treeview, frame = create_treeview_with_scrollbar(outer)
-        treeview.configure(columns=('name', 'value'), show='headings')
-        treeview.column('name', stretch=tk.YES, width=30)
-        treeview.column('value', stretch=tk.YES, width=80)
-        treeview.heading('name', text=_('Name'))
-        treeview.heading('value', text=_('Value (object)'))
-        frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        # ttk.Button(outer, text="New object", command=self.ask_create_object).pack(side=tk.BOTTOM, fill=tk.X, pady=3)
-
-        self.object_pane = treeview
+        outer.add_selection_listener(self._on_browser_select)
+        outer.add_edit_listener(self._on_browser_edit)
+        self.object_pane = outer.treeview
+        self.browser = outer
         return outer
+        # outer = ttk.Frame(parent, height=200)
+        # outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        # ttk.Label(outer, text=_('Global variables'), font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, pady=3)
+        # treeview, frame = create_treeview_with_scrollbar(outer)
+        # treeview.configure(columns=('name', 'value'), show='headings')
+        # treeview.column('name', stretch=tk.YES, width=30)
+        # treeview.column('value', stretch=tk.YES, width=80)
+        # treeview.heading('name', text=_('Name'))
+        # treeview.heading('value', text=_('Value (object)'))
+        # frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        # # ttk.Button(outer, text="New object", command=self.ask_create_object).pack(side=tk.BOTTOM, fill=tk.X, pady=3)
+
+        # self.object_pane = treeview
+        # return outer
 
     def ask_create_object(self):        
         variable = simpledialog.askstring(_("Variable name"), _("Enter a name for the new object\n(must be a valid Python identifier)\nor leave empty for a random name:"))
@@ -286,22 +293,23 @@ class Window:
             self.select_object(inspector.object_for_variable(obj_name), obj_name)
 
     def update_object_pane(self):
-        self.object_pane.delete(*self.object_pane.get_children())
+        self.browser.update_ui()
+        # self.object_pane.delete(*self.object_pane.get_children())
         
-        for var in [' '] + inspector.public_variables(type=self._common_supertype):
-            if var == ' ':
-                values = ('', '')
-            else:
-                obj = inspector.object_for_variable(var)
-                values = (var, str(obj))
-            self.object_pane.insert('', 'end', iid=var, text=var, values=values)
+        # for var in [' '] + inspector.public_variables(type=self._common_supertype):
+        #     if var == ' ':
+        #         values = ('', '')
+        #     else:
+        #         obj = inspector.object_for_variable(var)
+        #         values = (var, str(obj))
+        #     self.object_pane.insert('', 'end', iid=var, text=var, values=values)
         
-        if self._selected_variable is not None:
-            # if object_pane has key, select it
-            if self._selected_variable in self.object_pane.get_children():
-                self.object_pane.selection_set(self._selected_variable)
-            else:
-                self.object_pane.selection_set(' ')
+        # if self._selected_variable is not None:
+        #     # if object_pane has key, select it
+        #     if self._selected_variable in self.object_pane.get_children():
+        #         self.object_pane.selection_set(self._selected_variable)
+        #     else:
+        #         self.object_pane.selection_set(' ')
 
     def on_click_member(self, tree, obj_name):
         index = tree.selection()[0]

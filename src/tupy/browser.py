@@ -4,7 +4,7 @@ import tkinter.simpledialog as simpledialog
 from tupy.inspector import inspector
 from tupy.gui_utils import create_treeview_with_scrollbar
 
-class Browser(tk.Toplevel):
+class Browser(ttk.Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -35,8 +35,8 @@ class Browser(tk.Toplevel):
         outer = ttk.Frame(self, height=200)
         outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        self.title(_('Objects'))
-        self.lift()
+        # self.title(_('Objects'))
+        # self.lift()
         
         f = ttk.Frame(outer)
         self.button_back = ttk.Button(f, text='⇦', command=self.go_back)
