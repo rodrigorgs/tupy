@@ -3,12 +3,12 @@ import tupy
 
 class Inspector:
     def __init__(self, env) -> None:
-        self._env = env or []
+        self.env = env or []
     
     def public_variables(self, type=object):
         if isinstance(type, str):
             type = eval(type)
-        return [var for var in self._env if not var.startswith('_') and isinstance(self._env[var], type)]
+        return [var for var in self.env if not var.startswith('_') and isinstance(self.env[var], type)]
 
     def object_has_type(self, obj, type):
         if isinstance(type, str):
@@ -18,22 +18,22 @@ class Inspector:
     def public_objects(self, type=object):
         if isinstance(type, str):
             type = eval(type)
-        return [self._env[var] for var in self.public_variables(type=type)]
+        return [self.env[var] for var in self.public_variables(type=type)]
 
     def eval(self, str):
         # print('eval', str)
-        return eval(str, self._env)
+        return eval(str, self.env)
     
     def object_for_variable(self, var):
         return self.eval(var)
-        # return self._env[var]
+        # return self.env[var]
 
     def destroy_variable(self, var):
-        del self._env[var]
+        del self.env[var]
     
     def destroy_object(self, obj):
         for var in self.public_variables():
-            if self._env[var] == obj:
+            if self.env[var] == obj:
                 self.destroy_variable(var)
 
     def get_public_methods(self, obj):
@@ -55,4 +55,6 @@ class Inspector:
         return s
     
     def create_object(self, variable, classname, args=''):
-        exec(f'{variable} = {classname}({args})', self._env)
+        exec(f'{variable} = {classname}({args})', self.env)
+
+inspector = Inspector([])

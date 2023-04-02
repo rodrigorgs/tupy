@@ -8,7 +8,7 @@ import gettext
 
 from tupy.gui import Window
 from tupy.input_map import InputMap
-from tupy.inspector import Inspector
+from tupy.inspector import inspector
 from tupy.registry import Registry
 
 _translation = gettext.translation('tupy', localedir=os.path.join(os.path.dirname(__file__), 'locale'), 
@@ -17,9 +17,8 @@ _translation.install()
 
 global_canvas = None
 objects = Registry()
-inspector: Optional[Inspector] = None
 input = InputMap()
-window = Window(inspector=inspector, input=input, common_supertype='tupy.TupyObject', registry=objects)
+window = Window(input=input, common_supertype='tupy.TupyObject', registry=objects)
 
 class TupyObject:
     def __new__(cls, *args, **kwargs):
@@ -276,13 +275,12 @@ class Image(TupyObject):
         self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path).rotate(value))
         global_canvas.itemconfig(self._tkid, image=self._tkobject)
 
-
+# global global_canvas
 window.create()
 global_canvas = window.canvas
 
 def run(globals):
-    global inspector
-    inspector = Inspector(globals)
+    inspector.env = globals
     window._inspector = inspector
     window.update_object_pane()
     window.main_loop()

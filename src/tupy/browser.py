@@ -1,13 +1,11 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.simpledialog as simpledialog
+from tupy.inspector import inspector
 from tupy.gui_utils import create_treeview_with_scrollbar
 
 class Browser(tk.Toplevel):
     def __init__(self, *args, **kwargs):
-        if 'inspector' in kwargs:
-            self.inspector = kwargs['inspector']
-            del kwargs['inspector']
         super().__init__(*args, **kwargs)
 
         self.current_path = ''
@@ -94,14 +92,14 @@ class Browser(tk.Toplevel):
             path = f'{self.current_path}{item}'
             if path.startswith('.'):
                 path = path[1:]
-            object = eval(path, self.inspector._env)
+            object = eval(path, inspector.env)
             self.notify_selection_listeners(path, object)
         elif column == COLUMN_EDIT:
             # TODO: refactor to remove duplication
             path = f'{self.current_path}{item}'
             if path.startswith('.'):
                 path = path[1:]
-            value = repr(self.inspector.object_for_variable(path))
+            value = repr(inspector.object_for_variable(path))
             self.will_edit_value(name, value) # TODO: change '' to value
 
     def will_edit_value(self, attr_name, value):
@@ -136,18 +134,18 @@ class Browser(tk.Toplevel):
             name = f'{self.current_path}{iid}'
             if name.startswith('.'):
                 name = name[1:]
-            value = self.inspector.object_for_variable(name)
+            value = inspector.object_for_variable(name)
             self.treeview.insert('', tk.END, iid=iid, text=name, values=('⇨', name, repr(value)))
 
     @property
     def current_object(self):
         if self.current_path == '':
             return None
-        return eval(self.current_path, self.inspector._env)
+        return eval(self.current_path, inspector.env)
     
     def get_attributes(self):
         if self.current_path == '':
-            return self.inspector.public_variables(type='tupy.TupyObject')
+            return inspector.public_variables(type='tupy.TupyObject')
         else:
             obj = self.current_object
             if isinstance(obj, (list, tuple)):
@@ -155,4 +153,4 @@ class Browser(tk.Toplevel):
             elif isinstance(obj, dict):
                 return [f'[{repr(k)}]' for k in obj.keys()]
             else:
-                return self.inspector.get_public_attributes(self.current_object)
+                return inspector.get_public_attributes(self.current_object)

@@ -9,6 +9,7 @@ from contextlib import redirect_stdout, redirect_stderr
 import io
 from tupy.history import CommandHistory
 from tupy.browser import Browser
+from tupy.inspector import inspector
 
 from tupy.gui_utils import create_treeview_with_scrollbar
 
@@ -18,8 +19,7 @@ class Window:
     SIDE_PANE_WIDTH = 280
     UPDATE_DELAY = 1000 // 30
 
-    def __init__(self, inspector, input, common_supertype, registry):
-        self._inspector = inspector
+    def __init__(self, input, common_supertype, registry):
         self._common_supertype = common_supertype
         self._input = input
         self._command_history = CommandHistory()
@@ -112,7 +112,7 @@ class Window:
 
     def browse_objects(self):
         if self.browser is None:
-            self.browser = Browser(self.root, inspector=self._inspector)
+            self.browser = Browser(self.root)
             self.browser.bind("<Escape>", lambda _event: self._close_browser())
             self.browser.add_selection_listener(self._on_browser_select)
             self.browser.add_edit_listener(self._on_browser_edit)
@@ -172,16 +172,16 @@ class Window:
             return
 
         # check number of parameters
-        klass = self._inspector.object_for_variable(classname)
-        method = self._inspector.get_method(klass, '__init__')
-        params = self._inspector.method_parameters(method)
-        info = self._inspector.method_info(method).replace('(self, ', '(')
+        klass = inspector.object_for_variable(classname)
+        method = inspector.get_method(klass, '__init__')
+        params = inspector.method_parameters(method)
+        info = inspector.method_info(method).replace('(self, ', '(')
         args = ''
         
         if len(params) > 0:
             args = simpledialog.askstring(_("Constructor parameters"), _("Enter the parameters for the constructor of {classname}:\n{info}").format(classname=classname, info=info))
 
-        self._inspector.create_object(variable, classname, args)
+        inspector.create_object(variable, classname, args)
         self.update_object_pane()
 
     def create_member_pane(self, parent):
@@ -225,9 +225,9 @@ class Window:
             with redirect_stdout(f):
                 with redirect_stderr(g):
                     if use_eval:
-                        ret = eval(command, self._inspector._env)
+                        ret = eval(command, inspector.env)
                     else:
-                        exec(command, self._inspector._env)
+                        exec(command, inspector.env)
             out = f.getvalue()
             err = g.getvalue()
             ret_suffix = ''
@@ -263,7 +263,7 @@ class Window:
     def select_object(self, obj, obj_name):
         self._selected_object = obj
         self._selected_variable = obj_name
-        if obj is None:
+        if obj is None or not inspector.object_has_type(obj, self._common_supertype):
             self._selected_object = None
             self._selected_variable = None
             self.canvas.itemconfig(self._selection_box, outline='')
@@ -283,16 +283,16 @@ class Window:
         elif obj_name is None:
             self.select_object(None, None)
         else:
-            self.select_object(self._inspector.object_for_variable(obj_name), obj_name)
+            self.select_object(inspector.object_for_variable(obj_name), obj_name)
 
     def update_object_pane(self):
         self.object_pane.delete(*self.object_pane.get_children())
         
-        for var in [' '] + self._inspector.public_variables(type=self._common_supertype):
+        for var in [' '] + inspector.public_variables(type=self._common_supertype):
             if var == ' ':
                 values = ('', '')
             else:
-                obj = self._inspector.object_for_variable(var)
+                obj = inspector.object_for_variable(var)
                 values = (var, str(obj))
             self.object_pane.insert('', 'end', iid=var, text=var, values=values)
         
@@ -312,7 +312,7 @@ class Window:
         if new_value_str is not None:
             new_value = eval(new_value_str)
             setattr(self._selected_object, attr_name, new_value)
-            obj = eval(obj_name, self._inspector._env)
+            obj = eval(obj_name, inspector.env)
             self.update_member_pane(obj, obj_name=obj_name)
 
     def on_click_method(self, tree, obj_name):
@@ -320,11 +320,11 @@ class Window:
         item = tree.item(index)
         method_name = item['values'][0]
 
-        # obj = self._inspector.object_for_variable(obj_name)
+        # obj = inspector.object_for_variable(obj_name)
         obj = self._selected_object
-        method = self._inspector.get_method(obj, method_name)
-        info = self._inspector.method_info(method)
-        if self._inspector.method_parameters(method) == []:
+        method = inspector.get_method(obj, method_name)
+        info = inspector.method_info(method)
+        if inspector.method_parameters(method) == []:
             params = ''
         else:
             params = simpledialog.askstring(_("Provide parameters"), _("Comma-separated parameter list:") + "\n" + str(info))
@@ -332,11 +332,11 @@ class Window:
             # if obj_name is not None and obj_name != '':
             self.run_command(f'{obj_name}.{method_name}({params})', use_eval = True)
             # else:
-            #     # params_tuple = self._inspector.eval(f'({params},)')
+            #     # params_tuple = inspector.eval(f'({params},)')
             #     if params.strip() == '':
             #         ret = method()
             #     else:
-            #         params_tuple = (self._inspector.eval(p) for p in params.split(','))
+            #         params_tuple = (inspector.eval(p) for p in params.split(','))
             #         ret = method(*params_tuple)
             #     if ret is not None:
             #         self.write_on_history(f'=> {ret}\n', tag='output')
@@ -348,7 +348,7 @@ class Window:
 
         if obj is None:
             return
-        # if not self._inspector.object_has_type(obj, self._common_supertype):
+        # if not inspector.object_has_type(obj, self._common_supertype):
         #     return
         ttk.Label(self.member_pane, text=_("Object information"), font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         ttk.Label(self.member_pane, text=_("Type") + f": {obj.__class__.__name__}, id: 0x{id(obj):02x}", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
@@ -366,7 +366,7 @@ class Window:
         tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
         
-        for attr in self._inspector.get_public_attributes(obj):
+        for attr in inspector.get_public_attributes(obj):
             attr_value = getattr(obj, attr)
             tuple = (attr, repr(attr_value), type(attr_value).__name__)
             tree.insert('', tk.END, values=tuple)
@@ -382,21 +382,21 @@ class Window:
         tree_methods.heading('parameters', text=_('Parameters'))
         tree_frame_methods.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
-        for method in self._inspector.get_public_methods(obj):
+        for method in inspector.get_public_methods(obj):
             if method in ('update', ):
                 continue
-            params = self._inspector.method_parameters(self._inspector.get_method(obj, method))
+            params = inspector.method_parameters(inspector.get_method(obj, method))
             tuple = (method, ', '.join(params))
             tree_methods.insert('', tk.END, values=tuple)
             tree_methods.bind("<<TreeviewSelect>>", lambda e: self.on_click_method(tree_methods, obj_name))
 
     def update_objects(self):
         # if there is a global update function
-        if 'update' in self._inspector._env:
-            self._inspector._env['update']()
+        if 'update' in inspector.env:
+            inspector.env['update']()
         else:
             updated_object_ids = set()
-            for obj in self._inspector.public_objects(type=self._common_supertype):
+            for obj in inspector.public_objects(type=self._common_supertype):
                 if hasattr(obj, 'update') and id(obj) not in updated_object_ids:
                     obj.update()
                     updated_object_ids.add(id(obj))
