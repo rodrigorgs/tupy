@@ -263,7 +263,7 @@ class Window:
     def select_object(self, obj, obj_name):
         self._selected_object = obj
         self._selected_variable = obj_name
-        if obj is None or not self._inspector.object_has_type(obj, self._common_supertype):
+        if obj is None:
             self._selected_object = None
             self._selected_variable = None
             self.canvas.itemconfig(self._selection_box, outline='')
