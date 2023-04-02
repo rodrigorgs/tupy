@@ -40,8 +40,13 @@ class Browser(tk.Toplevel):
         self.title(_('Objects'))
         self.lift()
         
-        self.path_label = ttk.Label(outer, text=self.current_path, font=(None, 18, 'bold'))
-        self.path_label.pack(side=tk.TOP, fill=tk.X, pady=3)
+        f = ttk.Frame(outer)
+        self.button_back = ttk.Button(f, text='⇦', command=self.go_back)
+        self.button_back.pack(side=tk.LEFT, ipadx=2)
+
+        self.path_label = ttk.Label(f, text=self.current_path, font=(None, 18, 'bold'))
+        self.path_label.pack(side=tk.LEFT, fill=tk.X, pady=3)
+        f.pack(side=tk.TOP, fill=tk.X, pady=3)
 
         self.value_label = ttk.Label(outer, text=self.current_path, font=(None, 16, ''))
         self.value_label.pack(side=tk.TOP, fill=tk.X, pady=3)
@@ -61,6 +66,12 @@ class Browser(tk.Toplevel):
 
         return treeview
     
+    def go_back(self):
+        self.current_path = self.get_parent(self.current_path)
+        self.update_ui()
+        # TODO: remove selection
+        self.notify_selection_listeners(self.current_path, self.current_object)
+
     def _on_item_select(self, event):
         item = self.treeview.identify_row(event.y)
         name = self.treeview.item(item, 'text')
@@ -70,10 +81,7 @@ class Browser(tk.Toplevel):
         COLUMN_SELECT = '#2'
         COLUMN_EDIT = '#3'
 
-        if name == '⇦':
-            self.current_path = self.get_parent(self.current_path)
-            self.update_ui()
-            # TODO: remove selection
+        if name == self.current_path:
             self.notify_selection_listeners(self.current_path, self.current_object)
         elif column == COLUMN_ACTION:
             self.current_path = f'{self.current_path}{item}'
@@ -120,7 +128,7 @@ class Browser(tk.Toplevel):
             self.value_label.configure(text=value_string)
             self.path_label.configure(text=self.current_path)
             
-            self.treeview.insert('', tk.END, iid='⇦', text='⇦', values=('⇦'))
+            self.treeview.insert('', tk.END, iid='.', text=self.current_path, values=('', self.current_path, ''))
         for name in self.get_attributes():
             iid = name
             if not iid.startswith('['):
@@ -133,6 +141,8 @@ class Browser(tk.Toplevel):
 
     @property
     def current_object(self):
+        if self.current_path == '':
+            return None
         return eval(self.current_path, self.inspector._env)
     
     def get_attributes(self):
