@@ -10,6 +10,7 @@ import io
 from tupy.history import CommandHistory
 from tupy.browser import Browser
 from tupy.inspector import inspector
+from tupy.inspector_model import InspectorModel
 
 from tupy.gui_utils import create_treeview_with_scrollbar
 
@@ -29,6 +30,8 @@ class Window:
         self.is_paused = False
         self.browser = None
         self._registry = registry
+        self.model = InspectorModel()
+        self.model.selection_changed.subscribe(lambda x: self.select_object())
 
     def create(self):
         self.root = tk.Tk()
@@ -134,7 +137,7 @@ class Window:
         side_pane.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         outer_object_pane = self.create_object_pane(side_pane)
-        self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
+        # self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
         self.member_pane = self.create_member_pane(side_pane)
 
         side_pane.add(outer_object_pane)
@@ -143,10 +146,10 @@ class Window:
         return side_pane
 
     def create_object_pane(self, parent):
-        outer = Browser(parent, height=200)
+        outer = Browser(parent, height=200, model=self.model)
         outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        outer.add_selection_listener(self._on_browser_select)
-        outer.add_edit_listener(self._on_browser_edit)
+        # outer.add_selection_listener(self._on_browser_select) #RRR
+        # outer.add_edit_listener(self._on_browser_edit) #RRR
         self.object_pane = outer.treeview
         self.browser = outer
         return outer
@@ -267,7 +270,10 @@ class Window:
     def submit_console(self, _event):
         self.run_command(self.console.get(), on_end=lambda: self.console.delete(0, tk.END))
 
-    def select_object(self, obj, obj_name):
+    def select_object(self, obj=None, obj_name=None):
+        obj = self.model.selected_object
+        obj_name = self.model.selected_path
+
         self._selected_object = obj
         self._selected_variable = obj_name
         if obj is None or not inspector.object_has_type(obj, self._common_supertype):
@@ -350,7 +356,10 @@ class Window:
             #         self.write_on_history(f'=> {ret}\n', tag='output')
             self.update_member_pane(obj, obj_name=obj_name)
 
-    def update_member_pane(self, obj, obj_name):
+    def update_member_pane(self, obj=None, obj_name=None):
+        obj = self.model.selected_object
+        obj_name = self.model.selected_path
+
         for child in self.member_pane.winfo_children():
             child.destroy()
 
