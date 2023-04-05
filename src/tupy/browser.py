@@ -53,7 +53,7 @@ class Browser(ttk.Frame):
     def selection_changed(self):
         # change selection in treeview
         for item in self.treeview.get_children():
-            if self.treeview.item(item, 'text') == self.model.selected_path:
+            if self.treeview.item(item, 'text') == self.model.selected_subpath:
                 self.treeview.selection_set(item)
                 break
 
