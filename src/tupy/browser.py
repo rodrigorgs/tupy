@@ -89,7 +89,7 @@ class Browser(ttk.Frame):
     def update_ui(self):
         self.treeview.delete(*self.treeview.get_children())
         if self.model.toplevel_path == '':
-            self.path_label.configure(text=_('Global'))
+            self.path_label.configure(text=_('Global variables'))
             self.value_label.configure(text='')
         else:
             value_string = repr(self.model.selected_object)
