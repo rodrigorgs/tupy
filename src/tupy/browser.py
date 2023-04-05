@@ -71,12 +71,12 @@ class Browser(ttk.Frame):
         COLUMN_SELECT = '#2'
         COLUMN_EDIT = '#3'
 
-        if name == self.model.selected_path:
-            self.model.selection_changed.notify()
-        elif column == COLUMN_BROWSE:
+        
+        if column == COLUMN_BROWSE:
             self.model.browse_attribute(name)
         elif column == COLUMN_SELECT:
-            self.model.select_attribute(name)
+            if name == self.model.selected_path:
+                self.model.selection_changed.notify()
         elif column == COLUMN_EDIT:
             path = self.model.get_full_path(name)
             value = repr(inspector.object_for_variable(path))
