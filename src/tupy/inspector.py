@@ -45,8 +45,11 @@ class Inspector:
         return getattr(obj, method_name)
 
     def method_parameters(self, method):
-        # return inspect.signature(method).parameters
-        return inspect.getargspec(method).args[1:]
+        try:
+            return inspect.getargspec(method).args[1:]
+        except ValueError:
+            return inspect.signature(method).parameters
+
 
     def method_info(self, method):
         s = f'{method.__name__}{inspect.signature(method)}'
