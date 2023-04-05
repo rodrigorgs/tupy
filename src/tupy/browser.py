@@ -36,13 +36,11 @@ class Browser(ttk.Frame):
 
         treeview, frame = create_treeview_with_scrollbar(outer)
 
-        treeview.configure(columns=('action', 'name', 'value'), show='headings')
-        treeview.column('action', stretch=tk.YES, width=20)
+        treeview.configure(columns=('action', 'name'), show='headings')
+        treeview.column('action', stretch=tk.NO, width=30)
         treeview.column('name', stretch=tk.YES, width=150)
-        treeview.column('value', stretch=tk.YES, width=150)
         treeview.heading('action', text='')
         treeview.heading('name', text=_('Name'))
-        treeview.heading('value', text=_('Value'))
 
         treeview.bind('<Button-1>', self._on_item_select)
         treeview.bind('<<TreeviewSelect>>', self._tv_select)
@@ -69,7 +67,7 @@ class Browser(ttk.Frame):
 
         COLUMN_BROWSE = '#1'
         COLUMN_SELECT = '#2'
-        COLUMN_EDIT = '#3'
+        # COLUMN_EDIT = '#3'
 
         
         if column == COLUMN_BROWSE:
@@ -77,16 +75,16 @@ class Browser(ttk.Frame):
         elif column == COLUMN_SELECT:
             if name == self.model.selected_path:
                 self.model.selection_changed.notify()
-        elif column == COLUMN_EDIT:
-            path = self.model.get_full_path(name)
-            value = repr(inspector.object_for_variable(path))
-            self.will_edit_value(name, value) # TODO: change '' to value
+        # elif column == COLUMN_EDIT:
+        #     path = self.model.get_full_path(name)
+        #     value = repr(inspector.object_for_variable(path))
+        #     self.will_edit_value(name, value) # TODO: change '' to value
 
-    def will_edit_value(self, attr_name, value):
-        new_value_str = simpledialog.askstring(_('Set value'), _('New value for {attr_name}:').format(attr_name=attr_name), initialvalue=value)
-        if new_value_str is not None:
-            self.notify_edit_listeners(attr_name, new_value_str)
-            self.update_ui()
+    # def will_edit_value(self, attr_name, value):
+    #     new_value_str = simpledialog.askstring(_('Set value'), _('New value for {attr_name}:').format(attr_name=attr_name), initialvalue=value)
+    #     if new_value_str is not None:
+    #         self.notify_edit_listeners(attr_name, new_value_str)
+    #         self.update_ui()
 
     def update_ui(self):
         self.treeview.delete(*self.treeview.get_children())
@@ -99,9 +97,9 @@ class Browser(ttk.Frame):
             self.value_label.configure(text=value_string)
             self.path_label.configure(text=self.model.toplevel_path)
             
-            self.treeview.insert('', tk.END, iid='.', text='', values=('', 'self', ''))
+            self.treeview.insert('', tk.END, iid='.', text='', values=('', 'self'))
         
         for attr_name in self.model.get_attributes(toplevel=True):
             path = self.model.get_full_path(attr_name)
             value = inspector.object_for_variable(path)
-            self.treeview.insert('', tk.END, iid=path, text=attr_name, values=('⇨', attr_name, repr(value)))
+            self.treeview.insert('', tk.END, iid=path, text=attr_name, values=('⇨', attr_name))
