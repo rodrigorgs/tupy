@@ -14,6 +14,7 @@ class Browser(ttk.Frame):
         super().__init__(*args, **kwargs)
 
         self.model.toplevel_changed.subscribe(lambda x: self.update_ui())
+        self.model.selection_changed.subscribe(lambda x: self.selection_changed())
 
         self.treeview = self.configure_ui()
         self.update_ui()
@@ -44,27 +45,40 @@ class Browser(ttk.Frame):
         treeview.heading('value', text=_('Value'))
 
         treeview.bind('<Button-1>', self._on_item_select)
+        treeview.bind('<<TreeviewSelect>>', self._tv_select)
         frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         return treeview
     
+    def selection_changed(self):
+        # change selection in treeview
+        for item in self.treeview.get_children():
+            if self.treeview.item(item, 'text') == self.model.selected_path:
+                self.treeview.selection_set(item)
+                break
+
+    def _tv_select(self, _event):
+        index = self.treeview.selection()[0]
+        name = self.treeview.item(index, 'text')
+        self.model.select_attribute(name)
+
     def _on_item_select(self, event):
         item = self.treeview.identify_row(event.y)
         name = self.treeview.item(item, 'text')
         column = self.treeview.identify_column(event.x)
 
-        COLUMN_ACTION = '#1'
+        COLUMN_BROWSE = '#1'
         COLUMN_SELECT = '#2'
         COLUMN_EDIT = '#3'
 
         if name == self.model.selected_path:
             self.model.selection_changed.notify()
-        elif column == COLUMN_ACTION:
-            self.model.browse_attribute(item)
+        elif column == COLUMN_BROWSE:
+            self.model.browse_attribute(name)
         elif column == COLUMN_SELECT:
-            self.model.select_attribute(item)
+            self.model.select_attribute(name)
         elif column == COLUMN_EDIT:
-            path = self.model.get_full_path(item)
+            path = self.model.get_full_path(name)
             value = repr(inspector.object_for_variable(path))
             self.will_edit_value(name, value) # TODO: change '' to value
 
@@ -85,13 +99,9 @@ class Browser(ttk.Frame):
             self.value_label.configure(text=value_string)
             self.path_label.configure(text=self.model.toplevel_path)
             
-            self.treeview.insert('', tk.END, iid='.', text=self.model.toplevel_path, values=('', self.model.toplevel_path, ''))
-        for name in self.model.get_attributes():
-            iid = name
-            if not iid.startswith('['):
-                iid = f'.{name}'
-            name = f'{self.model.toplevel_path}{iid}'
-            if name.startswith('.'):
-                name = name[1:]
-            value = inspector.object_for_variable(name)
-            self.treeview.insert('', tk.END, iid=iid, text=name, values=('⇨', name, repr(value)))
+            self.treeview.insert('', tk.END, iid='.', text='', values=('', 'self', ''))
+        
+        for attr_name in self.model.get_attributes(toplevel=True):
+            path = self.model.get_full_path(attr_name)
+            value = inspector.object_for_variable(path)
+            self.treeview.insert('', tk.END, iid=path, text=attr_name, values=('⇨', attr_name, repr(value)))

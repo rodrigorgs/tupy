@@ -11,6 +11,7 @@ from tupy.history import CommandHistory
 from tupy.browser import Browser
 from tupy.inspector import inspector
 from tupy.inspector_model import InspectorModel
+from tupy.member_pane import MemberPane
 
 from tupy.gui_utils import create_treeview_with_scrollbar
 
@@ -113,31 +114,11 @@ class Window:
         toolbar.pack(side=tk.TOP, fill=tk.X, expand=False)
         return toolbar
 
-    # def browse_objects(self):
-    #     if self.browser is None:
-    #         self.browser = Browser(self.root)
-    #         self.browser.bind("<Escape>", lambda _event: self._close_browser())
-    #         self.browser.add_selection_listener(self._on_browser_select)
-    #         self.browser.add_edit_listener(self._on_browser_edit)
-    #     else:
-    #         self.browser.lift()
-    
-    # def _close_browser(self):
-    #     self.browser.destroy()
-    #     self.browser = None
-
-    def _on_browser_select(self, path, obj):
-        self.select_object(obj, path)
-        
-    def _on_browser_edit(self, path, value_str):
-        self.run_command(f'{path} = {value_str}')
-
     def create_side_pane(self, parent):
         side_pane = ttk.PanedWindow(parent, orient=tk.VERTICAL, width=self.SIDE_PANE_WIDTH)
         side_pane.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         outer_object_pane = self.create_object_pane(side_pane)
-        # self.object_pane.bind('<<TreeviewSelect>>', lambda event: self.on_click_object(self.object_pane))
         self.member_pane = self.create_member_pane(side_pane)
 
         side_pane.add(outer_object_pane)
@@ -148,26 +129,8 @@ class Window:
     def create_object_pane(self, parent):
         outer = Browser(parent, height=200, model=self.model)
         outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        # outer.add_selection_listener(self._on_browser_select) #RRR
-        # outer.add_edit_listener(self._on_browser_edit) #RRR
-        self.object_pane = outer.treeview
         self.browser = outer
         return outer
-        # outer = ttk.Frame(parent, height=200)
-        # outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-
-        # ttk.Label(outer, text=_('Global variables'), font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, pady=3)
-        # treeview, frame = create_treeview_with_scrollbar(outer)
-        # treeview.configure(columns=('name', 'value'), show='headings')
-        # treeview.column('name', stretch=tk.YES, width=30)
-        # treeview.column('value', stretch=tk.YES, width=80)
-        # treeview.heading('name', text=_('Name'))
-        # treeview.heading('value', text=_('Value (object)'))
-        # frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        # # ttk.Button(outer, text="New object", command=self.ask_create_object).pack(side=tk.BOTTOM, fill=tk.X, pady=3)
-
-        # self.object_pane = treeview
-        # return outer
 
     def ask_create_object(self):        
         variable = simpledialog.askstring(_("Variable name"), _("Enter a name for the new object\n(must be a valid Python identifier)\nor leave empty for a random name:"))
@@ -195,7 +158,7 @@ class Window:
         self.update_object_pane()
 
     def create_member_pane(self, parent):
-        member_pane = ttk.Frame(parent)
+        member_pane = MemberPane(parent, model=self.model, run_command=self.run_command)
         return member_pane
 
     def create_canvas(self, parent):
@@ -280,11 +243,11 @@ class Window:
             self._selected_object = None
             self._selected_variable = None
             self.canvas.itemconfig(self._selection_box, outline='')
-            self.update_member_pane(None, None)
+            self.update_member_pane(None, None) #TODO
         else:
             self.canvas.itemconfig(self._selection_box, outline='darkgray', dash=(5, 5))
             self.canvas.tag_raise(self._selection_box)
-            self.update_member_pane(obj, obj_name)
+            self.update_member_pane(obj, obj_name) #TODO
 
     def on_click_object(self, tree):
         index = tree.selection()[0]
@@ -300,22 +263,6 @@ class Window:
 
     def update_object_pane(self):
         self.browser.update_ui()
-        # self.object_pane.delete(*self.object_pane.get_children())
-        
-        # for var in [' '] + inspector.public_variables(type=self._common_supertype):
-        #     if var == ' ':
-        #         values = ('', '')
-        #     else:
-        #         obj = inspector.object_for_variable(var)
-        #         values = (var, str(obj))
-        #     self.object_pane.insert('', 'end', iid=var, text=var, values=values)
-        
-        # if self._selected_variable is not None:
-        #     # if object_pane has key, select it
-        #     if self._selected_variable in self.object_pane.get_children():
-        #         self.object_pane.selection_set(self._selected_variable)
-        #     else:
-        #         self.object_pane.selection_set(' ')
 
     def on_click_member(self, tree, obj_name):
         index = tree.selection()[0]
@@ -357,55 +304,7 @@ class Window:
             self.update_member_pane(obj, obj_name=obj_name)
 
     def update_member_pane(self, obj=None, obj_name=None):
-        obj = self.model.selected_object
-        obj_name = self.model.selected_path
-
-        for child in self.member_pane.winfo_children():
-            child.destroy()
-
-        if obj is None:
-            return
-        # if not inspector.object_has_type(obj, self._common_supertype):
-        #     return
-        ttk.Label(self.member_pane, text=_("Object information"), font=(None, 18, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-        ttk.Label(self.member_pane, text=_("Type") + f": {obj.__class__.__name__}, id: 0x{id(obj):02x}", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-        ttk.Label(self.member_pane, text=_("Attributes"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-
-        cols = ('name', 'value', 'class')
-        tree, tree_frame = create_treeview_with_scrollbar(self.member_pane)
-        tree.configure(columns=cols, show='headings', height=6)
-        tree.column('name', stretch=tk.YES, width=50)
-        tree.column('value', stretch=tk.YES, width=50)
-        tree.column('class', stretch=tk.YES, width=50)
-        tree.heading('name', text=_('Name'))
-        tree.heading('value', text=_('Value'))
-        tree.heading('class', text=_('Value\'s Class'))
-        tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
-
-        
-        for attr in inspector.get_public_attributes(obj):
-            attr_value = getattr(obj, attr)
-            tuple = (attr, repr(attr_value), type(attr_value).__name__)
-            tree.insert('', tk.END, values=tuple)
-            tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
-
-        ttk.Label(self.member_pane, text=_("Methods"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-        cols = ('name', 'parameters')
-        tree_methods, tree_frame_methods = create_treeview_with_scrollbar(self.member_pane)
-        tree_methods.configure(columns=cols, show='headings', height=6)
-        tree_methods.column('name', stretch=tk.YES, width=50)
-        tree_methods.column('parameters', stretch=tk.YES, width=50)
-        tree_methods.heading('name', text=_('Name'))
-        tree_methods.heading('parameters', text=_('Parameters'))
-        tree_frame_methods.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
-
-        for method in inspector.get_public_methods(obj):
-            if method in ('update', ):
-                continue
-            params = inspector.method_parameters(inspector.get_method(obj, method))
-            tuple = (method, ', '.join(params))
-            tree_methods.insert('', tk.END, values=tuple)
-            tree_methods.bind("<<TreeviewSelect>>", lambda e: self.on_click_method(tree_methods, obj_name))
+        self.member_pane.update_ui()
 
     def update_objects(self):
         # if there is a global update function
@@ -439,9 +338,10 @@ class Window:
             if (obj is not None) and (not obj._contains_point(event.x, event.y)):
                 obj = None
             if obj is None:
-                self.select_object(None, None)
+                self.model.select_absolute_path('')
             else:
-                self.select_object(obj, f"objects[{obj._tkid}]")
+                path = f"objects[{obj._tkid}]"
+                self.model.select_absolute_path(path)
 
     def canvas_click(self, event):
         self._input.on_mouse_press(event)

@@ -15,3 +15,11 @@ class Registry:
 
     def __getitem__(self, id):
         return self.get_object(id)
+
+    def __iter__(self):
+        return iter(self._objects.values())
+    def __len__(self):
+        return len(self._objects)
+    
+    def keys(self):
+        return self._objects.keys()
