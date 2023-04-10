@@ -28,7 +28,7 @@ class Drone(Image):
     def _atualiza(self):
         itens = [v for k, v in globals().items() if isinstance(v, Estrela)]
         for item in itens:
-            if self.collides_with(item):
+            if self._collides_with(item):
                 item.acende()
 
 class Estrela(Image):

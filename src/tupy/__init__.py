@@ -37,7 +37,7 @@ class TupyObject:
         w, h = self._width / 2, self._height / 2
         return abs(x - px) < w and abs(y - py) < h
 
-    def collides_with(self, other):
+    def _collides_with(self, other):
         if not isinstance(other, TupyObject):
             raise TypeError('checking collision: other must be a tupy.Object')
         x, y = self.x, self.y

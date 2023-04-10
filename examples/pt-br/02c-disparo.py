@@ -12,7 +12,7 @@ class Tiro(Image):
 
     def update(self):
         self.y -= 15
-        if self.collides_with(inimigo):
+        if self._collides_with(inimigo):
             inimigo.destroy()
 
 class Smiley(Image):

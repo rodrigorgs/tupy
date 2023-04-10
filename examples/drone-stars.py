@@ -24,7 +24,7 @@ class Drone(Image):
 class Star(Image):
     def update(self):
         self.angle = (self.angle + 5) % 360
-        if self.collides_with(drone):
+        if self._collides_with(drone):
             self.destroy()
             score.increment()
 
