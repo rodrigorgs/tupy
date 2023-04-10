@@ -1,8 +1,8 @@
 import os
+import sys
 from typing import Optional
 from PIL import ImageTk, Image as PILImage
 import importlib.resources as pkg_resources
-import os
 import random
 import gettext
 
@@ -259,9 +259,13 @@ class Image(TupyObject):
         global_canvas.itemconfig(self._tkid, image=self._tkobject)
         self.angle = self.angle # Rotate image if needed
 
-    def _find_image_path(self, path):
+    def _find_image_path(self, filename):
+        script_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+        path = os.path.join(script_dir, filename)
         if not os.path.exists(path):
-            path = os.path.join(pkg_resources.path('tupy', 'assets'), path)
+            path = path = os.path.join(script_dir, "assets", filename)
+        if not os.path.exists(path):
+            path = os.path.join(pkg_resources.path('tupy', 'assets'), filename)
         if not os.path.exists(path):
             path = os.path.join(pkg_resources.path('tupy', 'assets'), 'missing.png')
         return path
