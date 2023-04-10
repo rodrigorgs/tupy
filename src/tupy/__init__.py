@@ -20,6 +20,9 @@ objects = Registry()
 input = InputMap()
 window = Window(input=input, common_supertype='tupy.TupyObject', registry=objects)
 
+def toast(message, duration=2000):
+    window.toast(message, duration)
+
 class TupyObject:
     def __new__(cls, *args, **kwargs):
         obj = super().__new__(cls)

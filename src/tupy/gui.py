@@ -233,6 +233,11 @@ class Window:
     def submit_console(self, _event):
         self.run_command(self.console.get(), on_end=lambda: self.console.delete(0, tk.END))
 
+    def toast(self, message, duration=2000):
+        label = tk.Label(self.root, text=message, bg="#f0f0f0", font=("Arial", 20))
+        label.place(x=10, y=50)
+        label.after(duration, label.destroy)
+
     def select_object(self, obj=None, obj_name=None):
         obj = self.model.selected_object
         obj_name = self.model.selected_path
