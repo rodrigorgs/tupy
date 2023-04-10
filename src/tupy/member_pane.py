@@ -92,7 +92,7 @@ class MemberPane(ttk.Frame):
         obj = self.model.selected_object
         method = inspector.get_method(obj, method_name)
         info = inspector.method_info(method)
-        if inspector.method_parameters(method) == []:
+        if len(inspector.method_parameters(method)) == 0:
             params = ''
         else:
             params = simpledialog.askstring(_("Provide parameters"), _("Comma-separated parameter list:") + "\n" + str(info))
