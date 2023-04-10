@@ -272,10 +272,10 @@ class Image(TupyObject):
         path = os.path.join(script_dir, filename)
         if not os.path.exists(path):
             path = path = os.path.join(script_dir, "assets", filename)
-        if not os.path.exists(path):
-            path = os.path.join(pkg_resources.path('tupy', 'assets'), filename)
-        if not os.path.exists(path):
-            path = os.path.join(pkg_resources.path('tupy', 'assets'), 'missing.png')
+        # if not os.path.exists(path):
+        #     path = os.path.join(pkg_resources.path('tupy', 'assets'), filename)
+        # if not os.path.exists(path):
+        #     path = os.path.join(pkg_resources.path('tupy', 'assets'), 'missing.png')
         return path
 
     @property
