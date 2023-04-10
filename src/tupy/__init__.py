@@ -35,6 +35,11 @@ class TupyObject:
         objects.remove_object(self)
         window.update_object_pane()
 
+    def _hide(self):
+        global_canvas.itemconfig(self._tkid, state='hidden')
+    def _show(self):
+        global_canvas.itemconfig(self._tkid, state='normal')
+
     def _contains_point(self, px, py):
         x, y = self.x, self.y
         w, h = self._width / 2, self._height / 2
