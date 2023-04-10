@@ -233,7 +233,7 @@ class Window:
     def submit_console(self, _event):
         self.run_command(self.console.get(), on_end=lambda: self.console.delete(0, tk.END))
 
-    def toast(self, message, duration=2000):
+    def toast(self, message, duration):
         label = tk.Label(self.root, text=message, bg="#f0f0f0", font=("Arial", 20))
         label.place(x=10, y=50)
         label.after(duration, label.destroy)
