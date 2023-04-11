@@ -56,11 +56,15 @@ class Browser(ttk.Frame):
                 break
 
     def _tv_select(self, _event):
+        if len(self.treeview.selection()) == 0:
+            return
         index = self.treeview.selection()[0]
         name = self.treeview.item(index, 'text')
         self.model.select_attribute(name)
 
     def _on_item_select(self, event):
+        if len(self.treeview.selection()) == 0:
+            return
         item = self.treeview.identify_row(event.y)
         name = self.treeview.item(item, 'text')
         column = self.treeview.identify_column(event.x)
