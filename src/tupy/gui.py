@@ -154,7 +154,7 @@ class Window:
         if len(params) > 0:
             args = simpledialog.askstring(_("Constructor parameters"), _("Enter the parameters for the constructor of {classname}:\n{info}").format(classname=classname, info=info))
 
-        inspector.create_object(variable, classname, args)
+        self.run_command(f'{variable} = {classname}({args})')
         self.update_object_pane()
 
     def create_member_pane(self, parent):
