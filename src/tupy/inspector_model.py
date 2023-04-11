@@ -90,7 +90,7 @@ class InspectorModel:
     def selected_path(self):
         return self.get_full_path(self.selected_subpath)
 
-    def get_attributes(self, toplevel=False) -> list[str]:
+    def get_attributes(self, toplevel=False): #-> list[str]
         path = self.selected_path if not toplevel else self.toplevel_path
         if path == '':
             return inspector.public_variables(type='tupy.TupyObject')
@@ -103,7 +103,7 @@ class InspectorModel:
             else:
                 return inspector.get_public_attributes(obj)
 
-    def get_methods(self) -> list[str]:
+    def get_methods(self): # list[str]:
         if self.selected_path == '':
             return []
         else:
