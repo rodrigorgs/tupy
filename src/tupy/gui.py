@@ -133,14 +133,14 @@ class Window:
         return outer
 
     def ask_create_object(self):        
-        variable = simpledialog.askstring(_("Variable name"), _("Enter a name for the new object\n(must be a valid Python identifier)\nor leave empty for a random name:"))
+        variable = simpledialog.askstring(_("Variable name"), _("Enter a name for the new object\n(must be a valid Python identifier)\nor leave empty for a random name:"), parent=self.root)
         if variable is None:
             return
         if variable == '':
             suffix = ''.join(random.choices(string.ascii_lowercase, k=4))
             variable = f'obj_{suffix}'
 
-        classname = simpledialog.askstring(_("Class name"), _("Enter the name of the class to instantiate:"))
+        classname = simpledialog.askstring(_("Class name"), _("Enter the name of the class to instantiate:"), parent=self.root)
         if classname is None:
             return
 
@@ -152,7 +152,7 @@ class Window:
         args = ''
         
         if len(params) > 0:
-            args = simpledialog.askstring(_("Constructor parameters"), _("Enter the parameters for the constructor of {classname}:\n{info}").format(classname=classname, info=info))
+            args = simpledialog.askstring(_("Constructor parameters"), _("Enter the parameters for the constructor of {classname}:\n{info}").format(classname=classname, info=info), parent=self.root)
 
         self.run_command(f'{variable} = {classname}({args})')
         self.update_object_pane()
@@ -274,7 +274,7 @@ class Window:
         item = tree.item(index)
         attr_name = item['values'][0]
         value = item['values'][1]
-        new_value_str = simpledialog.askstring(_('Set value'), _('New value for {attr_name}:').format(attr_name=attr_name), initialvalue=value)
+        new_value_str = simpledialog.askstring(_('Set value'), _('New value for {attr_name}:').format(attr_name=attr_name), initialvalue=value, parent=self.root)
         if new_value_str is not None:
             new_value = eval(new_value_str)
             setattr(self._selected_object, attr_name, new_value)
@@ -293,7 +293,7 @@ class Window:
         if len(inspector.method_parameters(method)) == 0:
             params = ''
         else:
-            params = simpledialog.askstring(_("Provide parameters"), _("Comma-separated parameter list:") + "\n" + str(info))
+            params = simpledialog.askstring(_("Provide parameters"), _("Comma-separated parameter list:") + "\n" + str(info), parent=self.root)
         if params is not None:
             # if obj_name is not None and obj_name != '':
             self.run_command(f'{obj_name}.{method_name}({params})', use_eval = True)
