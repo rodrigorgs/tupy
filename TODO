@@ -9,3 +9,11 @@ TODO
 - Release mode: run(globals(), release=true) should open the application showing only the canvas
 - Create class ImageData to encapsulate a PIL Image (to improve performance of animations)
 - Selection of an object by clicking on it on canvas is a behavior that should be configurable via a toggle on the interface
+- Split input into keyboard and mouse
+- Override input() to use alerts to gather input
+- Add button to reload script
+- Add button to open script from file
+- Maybe use decorator to identify tupy objects (instead of inheritance)
+- Create class where x, y, file and angle are all private attributes
+- On Windows, dialogs shown when creating object are hidden under the window
+- Check if method pane has scrollbars
