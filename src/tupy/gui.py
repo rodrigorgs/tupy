@@ -326,7 +326,9 @@ class Window:
         if not self.is_paused:
             self.update_objects()
 
-        self._input.update()
+        for v in self._input.values():
+            v.update()
+        
         if self._selected_object is not None:
             o = self._selected_object
             if '_top_left' in dir(o) and 'x' in dir(o):
@@ -349,16 +351,16 @@ class Window:
                 self.model.select_absolute_path(path)
 
     def canvas_click(self, event):
-        self._input.on_mouse_press(event)
+        self._input['mouse'].on_mouse_press(event)
         if self.canvas.focus_get() is not None:
             self.select_object_on_canvas(event)
         self.canvas.focus_set()
 
     def main_loop(self):
         self.root.after(self.UPDATE_DELAY, self.run_updates)
-        self.canvas.bind('<KeyPress>', self._input.on_key_press)
-        self.canvas.bind('<KeyRelease>', self._input.on_key_release)
+        self.canvas.bind('<KeyPress>', self._input['keyboard'].on_key_press)
+        self.canvas.bind('<KeyRelease>', self._input['keyboard'].on_key_release)
         self.canvas.bind('<Button-1>', self.canvas_click)
-        self.canvas.bind('<ButtonRelease-1>', self._input.on_mouse_release)
-        self.canvas.bind('<Motion>', self._input.on_mouse_move)
+        self.canvas.bind('<ButtonRelease-1>', self._input['mouse'].on_mouse_release)
+        self.canvas.bind('<Motion>', self._input['mouse'].on_mouse_move)
         self.root.mainloop()

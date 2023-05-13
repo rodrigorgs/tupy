@@ -7,7 +7,7 @@ import random
 import gettext
 
 from tupy.gui import Window
-from tupy.input_map import InputMap
+from tupy.input_map import KeyboardMap, MouseMap
 from tupy.inspector import inspector
 from tupy.registry import Registry
 
@@ -17,8 +17,13 @@ _translation.install()
 
 global_canvas = None
 objects = Registry()
-input = InputMap()
-window = Window(input=input, common_supertype='tupy.TupyObject', registry=objects)
+keyboard = KeyboardMap()
+mouse = MouseMap()
+_input = {
+    'keyboard': keyboard,
+    'mouse': mouse
+}
+window = Window(input=_input, common_supertype='tupy.TupyObject', registry=objects)
 
 def toast(message, duration=3000):
     window.toast(message, duration)
@@ -224,7 +229,6 @@ class Image(TupyObject):
 
         self._tkid = global_canvas.create_image(x, y, image=self._tkobject)
         self._angle = 0
-        self._input = input
 
         objects.add_object(self)
 
