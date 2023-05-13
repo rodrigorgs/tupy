@@ -52,7 +52,6 @@ class KeyboardMap:
         self.keymap[event.keysym] = 0.5
     
     def update(self):
-        print('keyboard update')
         # print(self.keymap)
         for key in self.keymap:
             # just pressed => pressed
