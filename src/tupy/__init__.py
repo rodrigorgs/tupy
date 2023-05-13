@@ -5,6 +5,7 @@ from PIL import ImageTk, Image as PILImage
 import importlib.resources as pkg_resources
 import random
 import gettext
+import tkinter.simpledialog as simpledialog
 
 from tupy.gui import Window
 from tupy.input_map import KeyboardMap, MouseMap
@@ -24,6 +25,10 @@ _input = {
     'mouse': mouse
 }
 window = Window(input=_input, common_supertype='tupy.TupyObject', registry=objects)
+
+def input(prompt=''):
+    variable = simpledialog.askstring(_('Text input'), prompt, parent=window.root)
+    return variable
 
 def toast(message, duration=3000):
     window.toast(message, duration)
