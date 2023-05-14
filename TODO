@@ -11,6 +11,5 @@ TODO
 - Add button to reload script
 - Add button to open script from file
 - Maybe use decorator to identify tupy objects (instead of inheritance)
-- Create class where x, y, file and angle are all private attributes
 - On Windows, dialogs shown after first one do not get focus
 - Check if method pane has scrollbars

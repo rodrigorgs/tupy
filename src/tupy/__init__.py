@@ -50,17 +50,25 @@ class TupyObject:
     def _show(self):
         global_canvas.itemconfig(self._tkid, state='normal')
 
+    def _position(self):
+        try:
+            x, y = self.x, self.y
+        except AttributeError:
+            x, y = self._x, self._y
+        return (x, y)
+
     def _contains_point(self, px, py):
-        x, y = self.x, self.y
+        x, y = self._position()
         w, h = self._width / 2, self._height / 2
         return abs(x - px) < w and abs(y - py) < h
 
     def _collides_with(self, other):
         if not isinstance(other, TupyObject):
             raise TypeError('checking collision: other must be a tupy.Object')
+        x, y = self._position()
         x, y = self.x, self.y
         w, h = self._width / 2, self._height / 2
-        ox, oy = other.x, other.y
+        ox, oy = other._position()
         ow, oh = other._width / 2, other._height / 2
         return abs(x - ox) < w + ow and abs(y - oy) < h + oh
 
@@ -218,9 +226,15 @@ class Rectangle(TupyObject):
     def outline(self, value):
         global_canvas.itemconfig(self._tkid, outline=value)
 
-class Image(TupyObject):
+class PrivateImageAttributes:
+    def __init__(self) -> None:
+        self.file = ''
+        self.angle = 0
+
+class BaseImage(TupyObject):
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls)
+        self._attrs = PrivateImageAttributes()
         x = random.randint(0, Window.CANVAS_WIDTH)
         y = random.randint(0, Window.CANVAS_HEIGHT)
         self._initialize(x, y)
@@ -228,53 +242,56 @@ class Image(TupyObject):
 
     def _initialize(self, x, y):
         # if self._image_path is None:
-        self._file = self.__class__.__name__.lower() + '.png'
+        self._attrs.file = self.__class__.__name__.lower() + '.png'
         self._image_path = self._find_image_path(self._file)
         self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path))
-
         self._tkid = global_canvas.create_image(x, y, image=self._tkobject)
-        self._angle = 0
-
         objects.add_object(self)
 
     @property
     def _top_left(self):
-        return self.x - self._width / 2, self.y - self._height / 2
+        return self._x - self._width / 2, self._y - self._height / 2
 
     @property
-    def x(self):
+    def _x(self):
         return global_canvas.coords(self._tkid)[0]
-
-    @x.setter
-    def x(self, value):
-        global_canvas.coords(self._tkid, value, self.y)
-
+    @_x.setter
+    def _x(self, value):
+        global_canvas.coords(self._tkid, value, self._y)
     @property
-    def y(self):
+    def _y(self):
         return global_canvas.coords(self._tkid)[1]
-
-    @y.setter
-    def y(self, value):
-        global_canvas.coords(self._tkid, self.x, value)
-
+    @_y.setter
+    def _y(self, value):
+        global_canvas.coords(self._tkid, self._x, value)
     @property
     def _width(self):
         return self._tkobject.width()
     @property
     def _height(self):
         return self._tkobject.height()
+    
+    
+    @property
+    def _angle(self):
+        return self._attrs.angle
+    @_angle.setter
+    def _angle(self, value):
+        self._attrs.angle = value
+        self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path).rotate(value))
+        global_canvas.itemconfig(self._tkid, image=self._tkobject)
 
     @property
-    def file(self):
-        return self._file
+    def _file(self):
+        return self._attrs.file
         
-    @file.setter
-    def file(self, value):
-        self._file = value
+    @_file.setter
+    def _file(self, value):
+        self._attrs.file = value
         self._image_path = self._find_image_path(value)
         self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path))
         global_canvas.itemconfig(self._tkid, image=self._tkobject)
-        self.angle = self.angle # Rotate image if needed
+        self._angle = self._angle # Rotate image if needed
 
     def _find_image_path(self, filename):
         script_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
@@ -289,14 +306,38 @@ class Image(TupyObject):
                 path = os.path.join(pkg_path, 'missing.png')
         return path
 
+class Image(BaseImage):
+    def __new__(cls, *args, **kwargs):
+        self = super().__new__(cls)
+        return self
+
+    @property
+    def x(self):
+        return self._x
+    @x.setter
+    def x(self, value):
+        self._x = value
+
+    @property
+    def y(self):
+        return self._y
+    @y.setter
+    def y(self, value):
+        self._y = value
+
+    @property
+    def file(self):
+        return self._file
+    @file.setter
+    def file(self, value):
+        self._file = value
+
     @property
     def angle(self):
         return self._angle
     @angle.setter
     def angle(self, value):
         self._angle = value
-        self._tkobject = ImageTk.PhotoImage(PILImage.open(self._image_path).rotate(value))
-        global_canvas.itemconfig(self._tkid, image=self._tkobject)
 
 # global global_canvas
 window.create()
