@@ -1,12 +1,10 @@
 from tupy import *
 
-remove_public_members()
-
-class Star(Image):
+class Star(BaseImage):
     def update(self):
         self._angle += 3
 
-class Carta(Composite):
+class Carta(BaseComposite):
     def __init__(self, valor, cor, x, y) -> None:
         self.carta = Image()
         self.carta._file = 'carta.png'

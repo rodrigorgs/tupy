@@ -34,7 +34,7 @@ def toast(message, duration=3000):
     window.toast(message, duration)
 
 def remove_public_members():
-    for c in [TupyObject, Composite, Image, Label, Rectangle, Oval]:
+    for c in [TupyObject, BaseComposite, Image, Label, Rectangle, Oval]:
         for attr in dir(c):
             if not attr.startswith('_') and not attr == 'update':
                 delattr(c, attr)
@@ -87,7 +87,7 @@ class TupyObject:
     def __str__(self) -> str:
         return f'<{self.__class__.__name__}:0x{id(self):02x}>'
 
-class Composite(TupyObject):
+class BaseComposite(TupyObject):
     def __new__(cls, *args, **kwargs):
         obj = super().__new__(cls)
         obj._children = []
