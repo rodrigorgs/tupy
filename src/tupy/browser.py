@@ -4,9 +4,12 @@ import tkinter.simpledialog as simpledialog
 from tupy.inspector import inspector
 from tupy.inspector_model import InspectorModel
 from tupy.gui_utils import create_treeview_with_scrollbar
+from typing import Any
+from tupy.tupyobject import TkEvent
+from tupy.translation import _
 
 class Browser(ttk.Frame):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         if 'model' in kwargs:
             self.model = kwargs.pop('model')
         else:
@@ -19,7 +22,7 @@ class Browser(ttk.Frame):
         self.treeview = self.configure_ui()
         self.update_ui()
 
-    def configure_ui(self):
+    def configure_ui(self) -> ttk.Treeview:
         outer = ttk.Frame(self, height=200)
         outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
@@ -48,21 +51,21 @@ class Browser(ttk.Frame):
 
         return treeview
     
-    def selection_changed(self):
+    def selection_changed(self) -> None:
         # change selection in treeview
         for item in self.treeview.get_children():
             if self.treeview.item(item, 'text') == self.model.selected_subpath:
                 self.treeview.selection_set(item)
                 break
 
-    def _tv_select(self, _event):
+    def _tv_select(self, _event: Any) -> None:
         if len(self.treeview.selection()) == 0:
             return
         index = self.treeview.selection()[0]
         name = self.treeview.item(index, 'text')
         self.model.select_attribute(name)
 
-    def _on_item_select(self, event):
+    def _on_item_select(self, event: TkEvent) -> None:
         if len(self.treeview.selection()) == 0:
             return
         item = self.treeview.identify_row(event.y)
@@ -90,7 +93,7 @@ class Browser(ttk.Frame):
     #         self.notify_edit_listeners(attr_name, new_value_str)
     #         self.update_ui()
 
-    def update_ui(self):
+    def update_ui(self) -> None:
         self.treeview.delete(*self.treeview.get_children())
         if self.model.toplevel_path == '':
             self.path_label.configure(text=_('Global variables'))

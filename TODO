@@ -13,3 +13,4 @@ TODO
 - Maybe use decorator to identify tupy objects (instead of inheritance)
 - On Windows, dialogs shown after first one do not get focus
 - Check if method pane has scrollbars
+- Use tk.Frame or tk.Canvas for BaseComposite

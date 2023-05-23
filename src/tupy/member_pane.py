@@ -4,9 +4,11 @@ import tkinter.simpledialog as simpledialog
 from tupy.inspector import inspector
 from tupy.inspector_model import InspectorModel
 from tupy.gui_utils import create_treeview_with_scrollbar
+from typing import Any, Optional, Union
+from tupy.translation import _
 
 class MemberPane(ttk.Frame):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, master:Any=None, **kwargs: Any) -> None:
         if 'model' in kwargs:
             self.model = kwargs.pop('model')
         else:
@@ -15,14 +17,14 @@ class MemberPane(ttk.Frame):
             self.run_command = kwargs.pop('run_command')
         else:
             raise ValueError('run_command is required')
-        super().__init__(*args, **kwargs)
+        super().__init__(master, **kwargs)
 
         self.model.selection_changed.subscribe(lambda x: self.update_ui())
 
         # self.treeview = self.configure_ui()
         self.update_ui()
 
-    def update_ui(self):
+    def update_ui(self) -> None:
         obj = self.model.selected_object
         obj_name = self.model.selected_path
 
@@ -54,9 +56,9 @@ class MemberPane(ttk.Frame):
             tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
 
         ttk.Label(self, text=_("Methods"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
-        cols = ('name', 'parameters')
+        cols2 = ('name', 'parameters')
         tree_methods, tree_frame_methods = create_treeview_with_scrollbar(self)
-        tree_methods.configure(columns=cols, show='headings', height=6)
+        tree_methods.configure(columns=cols2, show='headings', height=6)
         tree_methods.column('name', stretch=tk.YES, width=50)
         tree_methods.column('parameters', stretch=tk.YES, width=50)
         tree_methods.heading('name', text=_('Name'))
@@ -67,12 +69,12 @@ class MemberPane(ttk.Frame):
             if method in ('update', ):
                 continue
             params = inspector.method_parameters(inspector.get_method(obj, method))
-            tuple = (method, ', '.join(params))
-            tree_methods.insert('', tk.END, values=tuple)
+            tuple2 = (method, ', '.join(params))
+            tree_methods.insert('', tk.END, values=tuple2)
             tree_methods.bind("<<TreeviewSelect>>", lambda e: self.on_click_method(tree_methods, obj_name))
 
 
-    def on_click_member(self, tree, obj_name):
+    def on_click_member(self, tree: ttk.Treeview, obj_name: str) -> None:
         index = tree.selection()[0]
         item = tree.item(index)
         attr_name = item['values'][0]
@@ -83,7 +85,7 @@ class MemberPane(ttk.Frame):
             self.run_command(f'{path} = {new_value_str}')
             self.update_ui()
 
-    def on_click_method(self, tree, obj_name):
+    def on_click_method(self, tree: ttk.Treeview, obj_name: str) -> None:
         index = tree.selection()[0]
         item = tree.item(index)
         method_name = item['values'][0]
@@ -92,6 +94,7 @@ class MemberPane(ttk.Frame):
         obj = self.model.selected_object
         method = inspector.get_method(obj, method_name)
         info = inspector.method_info(method)
+        params: Optional[str] = None
         if len(inspector.method_parameters(method)) == 0:
             params = ''
         else:
