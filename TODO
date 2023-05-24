@@ -2,7 +2,6 @@ TODO
 
 - Fix destroy() (currently doesn't work)
 - Remove padding of canvas
-- Turn object pane into an object browser; clicking on a button to navigate, and elsewhere to select
 - Update the selected object's attribute values every frame
 - When calling a method or setting an attribute using the UI, potential exceptions should be shown on history
 - Release mode: run(globals(), release=true) should open the application showing only the canvas
@@ -10,7 +9,11 @@ TODO
 - Selection of an object by clicking on it on canvas is a behavior that should be configurable via a toggle on the interface
 - Add button to reload script
 - Add button to open script from file
-- Maybe use decorator to identify tupy objects (instead of inheritance)
 - On Windows, dialogs shown after first one do not get focus
-- Check if method pane has scrollbars
 - Use tk.Frame or tk.Canvas for BaseComposite
+- Add toggle to see private members
+
+Old
+
+- Maybe use decorator to identify tupy objects (instead of inheritance)
+  - Tried it, it did't work
