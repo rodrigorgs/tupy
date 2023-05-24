@@ -27,7 +27,7 @@ class Browser(ttk.Frame):
         outer.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         f = ttk.Frame(outer)
-        self.button_back = ttk.Button(f, text='⇦', command=self.model.browse_parent)
+        self.button_back = ttk.Button(f, text='⇦', command=self.model.browse_parent, width=2)
         self.button_back.pack(side=tk.LEFT, ipadx=2)
 
         self.path_label = ttk.Label(f, text=self.model.toplevel_path, font=(None, 18, 'bold'))
