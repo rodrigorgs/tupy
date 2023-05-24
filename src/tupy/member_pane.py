@@ -6,6 +6,7 @@ from tupy.inspector_model import InspectorModel
 from tupy.gui_utils import create_treeview_with_scrollbar
 from typing import Any, Optional, Union
 from tupy.translation import _
+from tupy.tupyobject import TkEvent
 
 class MemberPane(ttk.Frame):
     def __init__(self, master:Any=None, **kwargs: Any) -> None:
@@ -38,22 +39,22 @@ class MemberPane(ttk.Frame):
         ttk.Label(self, text=_("Class") + f": {obj.__class__.__name__}, id: 0x{id(obj):02x}", font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         ttk.Label(self, text=_("Attributes"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
 
-        cols = ('name', 'value', 'class')
+        cols = ('name', 'value', 'action')
         tree, tree_frame = create_treeview_with_scrollbar(self)
         tree.configure(columns=cols, show='headings', height=6)
         tree.column('name', stretch=tk.YES, width=50)
-        tree.column('value', stretch=tk.YES, width=50)
-        tree.column('class', stretch=tk.YES, width=50)
+        tree.column('value', stretch=tk.YES, width=80)
+        tree.column('action', stretch=tk.YES, width=20)
         tree.heading('name', text=_('Name'))
         tree.heading('value', text=_('Value'))
-        tree.heading('class', text=_('Value\'s Class'))
+        tree.heading('action', text='')
         tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
 
         for attr in inspector.get_public_attributes(obj):
             attr_value = getattr(obj, attr)
-            tuple = (attr, repr(attr_value), type(attr_value).__name__)
+            tuple = (attr, repr(attr_value), '⇨') #type(attr_value).__name__
             tree.insert('', tk.END, values=tuple)
-            tree.bind("<<TreeviewSelect>>", lambda e: self.on_click_member(tree, obj_name))
+            tree.bind("<Button-1>", lambda event: self.on_click_attribute(tree, obj_name, event))
 
         ttk.Label(self, text=_("Methods"), font=(None, 14, 'bold')).pack(side=tk.TOP, fill=tk.X, expand=False)
         cols2 = ('name', 'parameters')
@@ -74,16 +75,26 @@ class MemberPane(ttk.Frame):
             tree_methods.bind("<<TreeviewSelect>>", lambda e: self.on_click_method(tree_methods, obj_name))
 
 
-    def on_click_member(self, tree: ttk.Treeview, obj_name: str) -> None:
+    def on_click_attribute(self, tree: ttk.Treeview, obj_name: str, event: TkEvent) -> None:
+        tree.selection_set(tree.identify_row(event.y))
+        if len(tree.selection()) == 0:
+            return
+
+        column = tree.identify_column(event.x)
         index = tree.selection()[0]
         item = tree.item(index)
         attr_name = item['values'][0]
         value = item['values'][1]
-        new_value_str = simpledialog.askstring(_('Set value'), _('New value for {attr_name}:').format(attr_name=attr_name), initialvalue=value)
-        if new_value_str is not None:
-            path = self.model.join_paths(self.model.selected_path, attr_name)
-            self.run_command(f'{path} = {new_value_str}')
-            self.update_ui()
+
+        if column == '#3': # drill down
+            self.model.select_absolute_path(self.model.join_paths(obj_name, attr_name))
+            # browse_attribute(attr_name)
+        else:
+            new_value_str = simpledialog.askstring(_('Set value'), _('New value for {attr_name}:').format(attr_name=attr_name), initialvalue=value)
+            if new_value_str is not None:
+                path = self.model.join_paths(self.model.selected_path, attr_name)
+                self.run_command(f'{path} = {new_value_str}')
+                self.update_ui()
 
     def on_click_method(self, tree: ttk.Treeview, obj_name: str) -> None:
         index = tree.selection()[0]

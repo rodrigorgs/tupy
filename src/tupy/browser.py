@@ -66,6 +66,7 @@ class Browser(ttk.Frame):
         self.model.select_attribute(name)
 
     def _on_item_select(self, event: TkEvent) -> None:
+        self.treeview.selection_set(self.treeview.identify_row(event.y))
         if len(self.treeview.selection()) == 0:
             return
         item = self.treeview.identify_row(event.y)
