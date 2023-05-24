@@ -14,13 +14,13 @@ class Player(BaseImage):
         self._angle = (self._angle + 5) % 360
 
         if keyboard.is_key_down('Up'):
-            self._y -= 10
+            self._y -= self.SPEED
         if keyboard.is_key_down('Down'):
-            self._y += 10
+            self._y += self.SPEED
         if keyboard.is_key_down('Left'):
-            self._x -= 10
+            self._x -= self.SPEED
         if keyboard.is_key_down('Right'):
-            self._x += 10
+            self._x += self.SPEED
 
 class Face(BaseComposite):
     pass
