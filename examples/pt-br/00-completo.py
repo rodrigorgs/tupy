@@ -28,7 +28,7 @@ class Face(BaseComposite):
 class Placar(BaseComposite):
     def __init__(self) -> None:
         self.pontos = 0
-        self._add(Rectangle(0, 0, 640, 40, fill='lightgray', outline='darkgray'))
+        self._add(Rectangle(0, 0, Window.CANVAS_WIDTH, 40, fill='lightgray', outline='darkgray'))
         
         self._label_mouse = Label('Mova o mouse', 5, 5, font='Arial 20', color='black')
         self._add(self._label_mouse)

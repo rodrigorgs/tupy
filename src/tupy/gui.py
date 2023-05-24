@@ -20,8 +20,8 @@ from tupy.translation import _
 from tupy.tupyobject import TkEvent, TupyObject
 
 class Window:
-    CANVAS_WIDTH = 640
-    CANVAS_HEIGHT = 480
+    CANVAS_WIDTH = 800
+    CANVAS_HEIGHT = 500
     SIDE_PANE_WIDTH = 280
     UPDATE_DELAY = 1000 // 30
 
@@ -47,6 +47,7 @@ class Window:
 
         self.toolbar = self.create_toolbar(self.root)
         self.toolbar.pack(side=tk.TOP, fill=tk.X, pady=3)
+        
         self.twocol = ttk.PanedWindow(self.root, orient=tk.HORIZONTAL)
         self.twocol.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
