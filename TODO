@@ -16,4 +16,4 @@ TODO
 Old
 
 - Maybe use decorator to identify tupy objects (instead of inheritance)
-  - Tried it, it did't work
+  - Tried it, it didn't work
