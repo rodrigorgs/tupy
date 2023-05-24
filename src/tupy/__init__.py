@@ -79,15 +79,20 @@ class BaseTupyObject(TupyObject):
     def _top_left(self) -> tuple[int, int]:
         return self._x, self._y
     
+    def update(self) -> None:
+        pass
+
     def __str__(self) -> str:
         return f'<{self.__class__.__name__}:0x{id(self):02x}>'
 
 class BaseComposite(BaseTupyObject):
     _children: list[TupyObject]
+    _tkid: int
 
     def __new__(cls, *args: Any, **kwargs: Any) -> 'BaseComposite':
         obj = super().__new__(cls)
         setattr(obj, '_children', [])
+        setattr(obj, '_tkid', -1)
         return cast('BaseComposite', obj)
     
     def _add(self, child: TupyObject) -> None:
@@ -160,47 +165,49 @@ class Oval(BaseTupyObject):
     @_x.setter
     def _x(self, value: int) -> None:
         window.canvas.coords(self._tkid, value, self._y, self._x+self._width, self._y+self._height)
-    x = _x
     @property
     def _y(self) -> int:
         return int(window.canvas.coords(self._tkid)[1])
     @_y.setter
     def _y(self, value: int) -> None:
         window.canvas.coords(self._tkid, self._x, value, self._x+self._width, self._y+self._height)
-    y = _y
     @property
     def _width(self) -> int:
         return int(window.canvas.coords(self._tkid)[2]) - self._x
     @_width.setter
     def _width(self, value: int) -> None:
         window.canvas.coords(self._tkid, self._x, self._y, self._x+value, self._y+self._height)
-    width = _width
     @property
     def _height(self) -> int:
         return int(window.canvas.coords(self._tkid)[3]) - self._y
     @_height.setter
     def _height(self, value: int) -> None:
         window.canvas.coords(self._tkid, self._x, self._y, self._x+self._width, self._y+value)
-    height = _height
     @property
     def _fill(self) -> str:
         return str, window.canvas.itemcget(self._tkid, 'fill') # type: ignore
     @_fill.setter
     def _fill(self, value: str) -> None:
         window.canvas.itemconfig(self._tkid, fill=value)
-    fill = _fill
     @property
     def _outline(self) -> str:
         return window.canvas.itemcget(self._tkid, 'outline') # type: ignore
     @_outline.setter
     def _outline(self, value: str) -> None:
         window.canvas.itemconfig(self._tkid, outline=value)
-    outline = _outline
 
     def destroy(self) -> None:
         window.canvas.delete(self._tkid)
 
+    x = cast(property, _x)
+    y = cast(property, _y)
+    width = cast(property, _width)
+    height = cast(property, _height)
+    fill = cast(property, _fill)
+    outline = cast(property, _outline)
+
 class Label(BaseTupyObject):
+    
     def __init__(self, text: str, x: int, y: int, font: str = 'Arial 20', color: str = 'black', anchor: Literal['nw', 'n', 'ne', 'w', 'center', 'e', 'sw', 's', 'se'] = 'nw') -> None:
         self._tkid = window.canvas.create_text(x, y, text=text, font=font, fill=color, anchor=anchor)
         objects.add_object(self)
@@ -211,35 +218,30 @@ class Label(BaseTupyObject):
     @_x.setter
     def _x(self, value: int) -> None:
         window.canvas.coords(self._tkid, value, self._y)
-    x = _x
     @property
     def _y(self) -> int:
         return int(window.canvas.coords(self._tkid)[1])
     @_y.setter
     def _y(self, value: int) -> None:
         window.canvas.coords(self._tkid, self._x, value)
-    y = _y
     @property
-    def _text(self) -> str:
+    def text(self) -> str:
         return window.canvas.itemcget(self._tkid, 'text') # type: ignore
-    @_text.setter
-    def _text(self, value: str) -> None:
+    @text.setter
+    def text(self, value: str) -> None:
         window.canvas.itemconfig(self._tkid, text=value)
-    text = _text
     @property
-    def _font(self) -> str:
+    def font(self) -> str:
         return window.canvas.itemcget(self._tkid, 'font') # type: ignore
-    @_font.setter
-    def _font(self, value: str) -> None:
+    @font.setter
+    def font(self, value: str) -> None:
         window.canvas.itemconfig(self._tkid, font=value)
-    font = _font
     @property
-    def _color(self) -> str:
+    def color(self) -> str:
         return window.canvas.itemcget(self._tkid, 'fill') # type: ignore
-    @_color.setter
-    def _color(self, value: str) -> None:
+    @color.setter
+    def color(self, value: str) -> None:
         window.canvas.itemconfig(self._tkid, fill=value)
-    color = _color
     @property
     def _width(self) -> int:
         return window.canvas.bbox(self._tkid)[2] - self._x
@@ -247,12 +249,14 @@ class Label(BaseTupyObject):
     def _height(self) -> int:
         return window.canvas.bbox(self._tkid)[3] - self._y
     @property
-    def _anchor(self) -> Literal['nw', 'n', 'ne', 'w', 'center', 'e', 'sw', 's', 'se']:
+    def anchor(self) -> Literal['nw', 'n', 'ne', 'w', 'center', 'e', 'sw', 's', 'se']:
         return window.canvas.itemcget(self._tkid, 'anchor') # type: ignore
-    @_anchor.setter
-    def _anchor(self, value: Literal['nw', 'n', 'ne', 'w', 'center', 'e', 'sw', 's', 'se']) -> None:
+    @anchor.setter
+    def anchor(self, value: Literal['nw', 'n', 'ne', 'w', 'center', 'e', 'sw', 's', 'se']) -> None:
         window.canvas.itemconfig(self._tkid, anchor=value)
-    anchor = _anchor
+
+    x = cast(property, _x)
+    y = cast(property, _y)
 
 class Rectangle(BaseTupyObject):
     def __init__(self, x: int, y: int, w: int, h: int, outline: str = 'black', fill: str = '') -> None:
@@ -265,42 +269,43 @@ class Rectangle(BaseTupyObject):
     @_x.setter
     def _x(self, value: int) -> None:
         window.canvas.coords(self._tkid, value, self._y, value + self._width, self._y + self._height)
-    x = _x
     @property
     def _y(self) -> int:
         return int(window.canvas.coords(self._tkid)[1])
     @_y.setter
     def _y(self, value: int) -> None:
         window.canvas.coords(self._tkid, self._x, value, self._x + self._width, value + self._height)
-    y = _y
     @property
     def _width(self) -> int:
         return int(window.canvas.coords(self._tkid)[2]) - self._x
     @_width.setter
     def _width(self, value: int) -> None:
         window.canvas.coords(self._tkid, self._x, self._y, self._x + value, self._y + self._height)
-    width = _width
     @property
     def _height(self) -> int:
         return int(window.canvas.coords(self._tkid)[3]) - self._y
     @_height.setter
     def _height(self, value: int) -> None:
         window.canvas.coords(self._tkid, self._x, self._y, self._x + self._width, self._y + value)
-    height = _height
     @property
     def _fill(self) -> str:
         return window.canvas.itemcget(self._tkid, 'fill') # type: ignore
     @_fill.setter
     def _fill(self, value: str) -> None:
         window.canvas.itemconfig(self._tkid, fill=value)
-    fill = _fill
     @property
     def _outline(self) -> str:
         return window.canvas.itemcget(self._tkid, 'outline') # type: ignore
     @_outline.setter
     def _outline(self, value: str) -> None:
         window.canvas.itemconfig(self._tkid, outline=value)
-    outline = _outline
+    
+    x = cast(property, _x)
+    y = cast(property, _y)
+    width = cast(property, _width)
+    height = cast(property, _height)
+    fill = cast(property, _fill)
+    outline = cast(property, _outline)
 
 class PrivateImageAttributes:
     def __init__(self) -> None:
@@ -385,14 +390,24 @@ class BaseImage(BaseTupyObject):
         return path
 
 class Image(BaseImage):
+    x = cast(property, BaseImage._x)
+    y = cast(property, BaseImage._y)
+    file = cast(property, BaseImage._file)
+    angle = cast(property, BaseImage._angle)
+
     def __new__(cls, *args: Any, **kwargs: Any) -> 'Image':
         self = super().__new__(cls)
         return cast('Image', self)
+    
 
-    x = BaseImage._x
-    y = BaseImage._y
-    file = BaseImage._file
-    angle = BaseImage._angle
+    def __init__(self, file: Optional[str] = None, x: Optional[int] = None, y: Optional[int] = None) -> None:
+        super().__init__()
+        if file is not None:
+            self._file = file
+        if x is not None:
+            self._x = x
+        if y is not None:
+            self._y = y
 
 window.create()
 
