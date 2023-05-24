@@ -40,6 +40,7 @@ class Window:
 
     def create(self) -> None:
         self.root = tk.Tk()
+        self.root.minsize(self.CANVAS_WIDTH + self.SIDE_PANE_WIDTH, self.CANVAS_HEIGHT + 200)
         self.root.title('Tupy')
         self.root.bind("<Escape>", lambda _event: self.root.destroy())
 
@@ -48,10 +49,10 @@ class Window:
         self.toolbar = self.create_toolbar(self.root)
         self.toolbar.pack(side=tk.TOP, fill=tk.X, pady=3)
         
-        self.twocol = ttk.PanedWindow(self.root, orient=tk.HORIZONTAL)
+        self.twocol = ttk.Frame(self.root) #ttk.PanedWindow(self.root, orient=tk.HORIZONTAL)
         self.twocol.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        self.tworow = ttk.PanedWindow(self.twocol, orient=tk.VERTICAL)
+        self.tworow = ttk.Frame(self.twocol)
 
         self.canvas = self.create_canvas(self.tworow)
         self.canvas.focus_set()
@@ -73,13 +74,15 @@ class Window:
         self.history.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         self.console.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=False)
 
-        self.tworow.add(self.canvas)
-        self.tworow.add(self.history_and_console)
+        self.canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=False)
+        self.history_and_console.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         
         self.side_pane = self.create_side_pane(self.twocol)
         
-        self.twocol.add(self.tworow)
-        self.twocol.add(self.side_pane)
+        self.tworow.pack(side=tk.LEFT, fill=tk.Y, expand=False)
+        self.side_pane.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        # self.twocol.add(self.tworow)
+        # self.twocol.add(self.side_pane)
         
     def play(self) -> None:
         self.is_paused = False
