@@ -173,7 +173,8 @@ class Window:
 
     def create_console(self, parent: tk.Misc) -> ttk.Entry:
         style = ttk.Style()
-        style.configure('console.TEntry', foreground='white', background='black', insertcolor='white')
+        style.theme_use('clam')
+        style.configure('console.TEntry', foreground='white', fieldbackground='black', insertcolor='white')
 
         console = ttk.Entry(parent, style='console.TEntry', font=('Monaco', 16))
         console.bind("<Return>", self.submit_console)
