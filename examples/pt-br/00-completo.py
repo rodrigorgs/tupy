@@ -22,10 +22,10 @@ class Player(BaseImage):
         if keyboard.is_key_down('Right'):
             self._x += self.SPEED
 
-class Face(BaseComposite):
+class Face(BaseGroup):
     pass
 
-class Placar(BaseComposite):
+class Placar(BaseGroup):
     def __init__(self) -> None:
         self.pontos = 0
         self._add(Rectangle(0, 0, Window.CANVAS_WIDTH, 40, fill='lightgray', outline='darkgray'))

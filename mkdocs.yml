@@ -6,12 +6,12 @@ nav:
   - Instalação: instalacao.md
   - Primeiro exemplo: exemplo.md
   - Interface: interface.md
-  - Básico:
+  - Guia:
     - Imagens: imagens.md
     - Atualização: atualizacao.md
     - Teclado e mouse: entrada.md
+    - Entrada e saída de texto: es.md
     - Outros tipos de objetos: classes.md
-    #- Encapsulamento: todo.md
-    #- Membros privados: todo.md
-    #- Composite: todo.md
-    #- Outros recursos: todo.md # toast
+    - Encapsulamento: encapsulamento.md
+    - BaseTupyObject: tupyobject.md
+    - Grupos de objetos: grupos.md

@@ -28,7 +28,7 @@ def toast(message: str, duration: int = 3000) -> None:
     window.toast(message, duration)
 
 def remove_public_members() -> None:
-    for c in [TupyObject, BaseComposite, Image, Label, Rectangle, Oval]:
+    for c in [TupyObject, BaseGroup, Image, Label, Rectangle, Oval]:
         for attr in dir(c):
             if not attr.startswith('_') and not attr == 'update':
                 delattr(c, attr)
@@ -85,65 +85,68 @@ class BaseTupyObject(TupyObject):
     def __str__(self) -> str:
         return f'<{self.__class__.__name__}:0x{id(self):02x}>'
 
-class BaseComposite(BaseTupyObject):
+class BaseGroup(BaseTupyObject):
     _children: list[TupyObject]
     _tkid: int
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> 'BaseComposite':
+    def __new__(cls, *args: Any, **kwargs: Any) -> 'BaseGroup':
         obj = super().__new__(cls)
-        setattr(obj, '_children', [])
+        setattr(obj, '_children_objs', [])
         setattr(obj, '_tkid', -1)
-        return cast('BaseComposite', obj)
+        return cast('BaseGroup', obj)
     
     def _add(self, child: TupyObject) -> None:
-        self._children.append(child)
+        self._children_objs.append(child)
     
     def _remove(self, child: TupyObject) -> None:
-        self._children.remove(child)
+        self._children_objs.remove(child)
     
+    def _clear(self) -> None:
+        self._children_objs.clear()
+
     @property
-    def children(self) -> tuple[TupyObject, ...]:
-        return tuple(self._children)
+    def _objects(self) -> list[TupyObject]:
+        return [*self._children_objs]
 
     @property
     def _x(self) -> int:
-        if len(self._children) == 0:
+        if len(self._children_objs) == 0:
             return 0
         else:
-            return self._children[0]._x
+            return self._children_objs[0]._x
     @_x.setter
     def _x(self, value: int) -> None:
         delta = value - self._x
-        for child in self._children:
+        for child in self._children_objs:
             child._x += delta
 
     @property
     def _y(self) -> int:
-        if len(self._children) == 0:
+        if len(self._children_objs) == 0:
             return 0
         else:
-            return self._children[0]._y
+            return self._children_objs[0]._y
     @_y.setter
     def _y(self, value: int) -> None:
         delta = value - self._y
-        for child in self._children:
+        for child in self._children_objs:
             child._y += delta
 
     def _hide(self) -> None:
-        for child in self._children:
+        for child in self._children_objs:
             child._hide()
 
     def _show(self) -> None:
-        for child in self._children:
+        for child in self._children_objs:
             child._show()
 
     def update(self) -> None:
-        for child in self._children:
+        for child in self._children_objs:
             if 'update' in dir(child):
                 child.update()
     
     def _contains_point(self, px: int, py: int) -> bool:
-        return any(child._contains_point(px, py) for child in self._children)
+        return any(child._contains_point(px, py) for child in self._children_objs)
     
     @property
     def _top_left(self) -> tuple[int, int]:
@@ -153,6 +156,19 @@ class BaseComposite(BaseTupyObject):
     
     def _collides_with(self, other: TupyObject) -> bool:
         return any(child._collides_with(other) for child in self._children)
+
+class Group(BaseGroup):
+    x = cast(property, BaseGroup._x)
+    y = cast(property, BaseGroup._y)
+    objects = cast(property, BaseGroup._objects)
+    add = cast(property, BaseGroup._add)
+    remove = cast(property, BaseGroup._remove)
+    clear = cast(property, BaseGroup._clear)
+
+    def __init__(self, initial_objects: list[TupyObject] = None) -> None:
+        if initial_objects is not None:
+            for obj in initial_objects:
+                self._add(obj)
 
 class Oval(BaseTupyObject):
     def __init__(self, x: int, y: int, width: int, height: int, outline: str = 'black', fill: str = ''):
@@ -323,6 +339,15 @@ class BaseImage(BaseTupyObject):
         self._initialize(x, y)
         return self
 
+    def __init__(self, file: Optional[str] = None, x: Optional[int] = None, y: Optional[int] = None) -> None:
+        super().__init__()
+        if file is not None:
+            self._file = file
+        if x is not None:
+            self._x = x
+        if y is not None:
+            self._y = y
+
     def _initialize(self, x: int, y: int) -> None:
         # if self._image_path is None:
         self._attrs.file = self.__class__.__name__.lower() + '.png'
@@ -401,13 +426,7 @@ class Image(BaseImage):
     
 
     def __init__(self, file: Optional[str] = None, x: Optional[int] = None, y: Optional[int] = None) -> None:
-        super().__init__()
-        if file is not None:
-            self._file = file
-        if x is not None:
-            self._x = x
-        if y is not None:
-            self._y = y
+        super().__init__(file, x, y)
 
 window.create()
 

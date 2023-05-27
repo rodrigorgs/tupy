@@ -8,7 +8,9 @@
       "name": "Python: example",
       "type": "python",
       "request": "launch",
-      "program": "../examples/all_examples.py",
+      "env": { "PYTHONPATH": "${workspaceFolder}${pathSeparator}src" },
+      //"program": "../examples/all_examples.py",
+      "program": "../examples/pt-br/00-completo.py",
       "console": "integratedTerminal",
       "justMyCode": true,
       "cwd": "${workspaceFolder}/src"
