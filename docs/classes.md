@@ -58,15 +58,15 @@ Onde:
 - `font` é a fonte do texto (por padrão, Arial tamanho 20)
 - `color` é a cor do texto (por padrão, preta)
 - `anchor` é o ponto de referência do texto. Pode ser um dos seguintes valores:
-  - `'nw'`: canto superior esquerdo
-  - `'n'`: centro superior
-  - `'ne'`: canto superior direito
-  - `'w'`: centro esquerdo
-  - `'center'`: centro
-  - `'e'`: centro direito
-  - `'sw'`: canto inferior esquerdo
-  - `'s'`: centro inferior
-  - `'se'`: canto inferior direito
+    - `'nw'`: canto superior esquerdo
+    - `'n'`: centro superior
+    - `'ne'`: canto superior direito
+    - `'w'`: centro esquerdo
+    - `'center'`: centro
+    - `'e'`: centro direito
+    - `'sw'`: canto inferior esquerdo
+    - `'s'`: centro inferior
+    - `'se'`: canto inferior direito
 
 Exemplo de uso:
 
