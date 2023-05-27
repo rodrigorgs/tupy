@@ -1,0 +1,17 @@
+site_name: Tupy Docs
+theme:
+  name: readthedocs
+nav:
+  - Introdução: index.md
+  - Instalação: instalacao.md
+  - Primeiro exemplo: exemplo.md
+  - Interface: interface.md
+  - Básico:
+    - Imagens: imagens.md
+    - Atualização: atualizacao.md
+    - Teclado e mouse: entrada.md
+    - Outros tipos de objetos: classes.md
+    #- Encapsulamento: todo.md
+    #- Membros privados: todo.md
+    #- Composite: todo.md
+    #- Outros recursos: todo.md # toast
