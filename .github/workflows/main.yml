@@ -18,4 +18,4 @@ jobs:
         # Or use mhausenblas/mkdocs-deploy-gh-pages@nomaterial to build without the mkdocs-material theme
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #REQUIREMENTS: folder/requirements.txt
+          REQUIREMENTS: folder/docs/requirements.txt
