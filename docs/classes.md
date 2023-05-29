@@ -48,13 +48,13 @@ Os parâmetros são os mesmos da classe `Rectangle` (ver acima).
 Para criar um texto:
 
 ```python
-Label(x, y, text, font = 'Arial 20', color = 'black', anchor = 'nw'):
+Label(text, x, y, font = 'Arial 20', color = 'black', anchor = 'nw'):
 ```
 
 Onde:
 
-- `x, y` é a posição do texto (ver o parâmetro `anchor` abaixo)
 - `text` é o texto a ser exibido (string)
+- `x, y` é a posição do texto (ver o parâmetro `anchor` abaixo)
 - `font` é a fonte do texto (por padrão, Arial tamanho 20)
 - `color` é a cor do texto (por padrão, preta)
 - `anchor` é o ponto de referência do texto. Pode ser um dos seguintes valores:

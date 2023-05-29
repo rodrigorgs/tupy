@@ -19,9 +19,9 @@ from tupy import *
 
 class Star(Image):
   def update(self):
-    if keyboard.is_key_down('left'):
+    if keyboard.is_key_down('Left'):
       self.x -= 2
-    if keyboard.is_key_down('right'):
+    if keyboard.is_key_down('Right'):
       self.x += 2
     if keyboard.is_key_just_down('space'):
       # volta para posição inicial
