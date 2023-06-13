@@ -86,7 +86,7 @@ class BaseTupyObject(TupyObject):
         return f'<{self.__class__.__name__}:0x{id(self):02x}>'
 
 class BaseGroup(BaseTupyObject):
-    _children: list[TupyObject]
+    _children_objs: list[TupyObject]
     _tkid: int
 
     def __new__(cls, *args: Any, **kwargs: Any) -> 'BaseGroup':
@@ -150,12 +150,12 @@ class BaseGroup(BaseTupyObject):
     
     @property
     def _top_left(self) -> tuple[int, int]:
-        minx = min(child._top_left[0] for child in self._children)
-        miny = min(child._top_left[1] for child in self._children)
+        minx = min(child._top_left[0] for child in self._children_objs)
+        miny = min(child._top_left[1] for child in self._children_objs)
         return minx, miny
     
     def _collides_with(self, other: TupyObject) -> bool:
-        return any(child._collides_with(other) for child in self._children)
+        return any(child._collides_with(other) for child in self._children_objs)
 
 class Group(BaseGroup):
     x = cast(property, BaseGroup._x)
