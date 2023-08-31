@@ -1,5 +1,6 @@
 from typing import Iterator, TYPE_CHECKING, Optional
 from tupy.tupyobject import TupyObject
+import copy
 
 # Registry of TupyObjects added to the canvas
 class Registry:
@@ -20,7 +21,7 @@ class Registry:
         return self.get_object(id)
 
     def __iter__(self) -> Iterator[TupyObject]:
-        return iter(self._objects.values())
+        return iter(copy.copy([*self._objects.values()]))
     def __len__(self) -> int:
         return len(self._objects)
     

@@ -331,7 +331,7 @@ class Window:
             inspector.env['update']()
         else:
             updated_object_ids = set()
-            for obj in inspector.public_objects(type=TupyObject):
+            for obj in self._registry:
                 if hasattr(obj, 'update') and id(obj) not in updated_object_ids:
                     obj.update()
                     updated_object_ids.add(id(obj))
