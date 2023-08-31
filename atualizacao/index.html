@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Atualização - Tupy Docs</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Atualiza\u00e7\u00e3o";
+        var mkdocs_page_input_path = "atualizacao.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Tupy Docs
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Introdução</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../instalacao/">Instalação</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../exemplo/">Primeiro exemplo</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../interface/">Interface</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Guia</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../imagens/">Imagens</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Atualização</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#funcao-update">Função update</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#metodo-update">Método update</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../entrada/">Teclado e mouse</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../es/">Entrada e saída de texto</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../classes/">Outros tipos de objetos</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../encapsulamento/">Encapsulamento</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tupyobject/">BaseTupyObject</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../grupos/">Grupos de objetos</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Tupy Docs</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+          <li>Guia &raquo;</li>
+      <li>Atualização</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="atualizacao-de-tela">Atualização de tela</h1>
+<p>O Tupy atualiza a tela cerca de 30 vezes por segundo e, com isso, é capaz de exibir animações. Para isso, é necessário alterar o estado dos objetos da cena ao longo do tempo. Para isso, você pode implementar uma função <code>update()</code> ou, ainda, implementar um método <code>update()</code> nas classes dos objetos que devem ser alterados.</p>
+<h2 id="funcao-update">Função update</h2>
+<p>A função <code>update()</code> é chamada a cada quadro da animação. Por exemplo:</p>
+<pre><code class="language-python">from tupy import *
+
+estrela1 = Image('star.png')
+estrela2 = Image('star.png')
+
+def update():
+  estrela1.angle += 5
+
+run(globals())
+</code></pre>
+<p>Nesse exemplo, a função <code>update()</code> é chamada a cada quadro da animação. A cada quadro, o ângulo da primeira estrela é incrementado em 5 graus. Isso faz com que a estrela gire continuamente.</p>
+<h2 id="metodo-update">Método update</h2>
+<p>Outra forma de atualizar o estado dos objetos é implementar um método <code>update()</code> nas classes dos objetos que devem ser alterados. Por exemplo:</p>
+<pre><code class="language-python">from tupy import *
+
+class Star(Image):
+  def update(self):
+    self.angle += 5
+
+estrela1 = Star('star.png')
+estrela2 = Star('star.png')
+
+run(globals())
+</code></pre>
+<p>Nesse caso, não é necessário definir uma função <code>update()</code> além do método <code>update()</code> da classe <code>Star</code>. A cada quadro, o método <code>update()</code> de cada estrela é chamado. Isso faz com que ambas as estrelas girem continuamente.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../imagens/" class="btn btn-neutral float-left" title="Imagens"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../entrada/" class="btn btn-neutral float-right" title="Teclado e mouse">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../imagens/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../entrada/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
